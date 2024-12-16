@@ -1,0 +1,42 @@
+* Python 2 EOL
+It is dead. Let it rest.
+
+* Python 3
+** TODO Dependencies
+** TODO Distribution
+** TODO Graphical User Interface
+*** =BaseHTTPServer=
+#+begin_src python
+  import BaseHTTPServer
+
+  class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
+      def do_GET(self):
+          self.send_response(200)
+          self.send_header("Content-type", "text/html")
+          self.end_headers()
+          self.wfile.write("Hello world!")
+
+  server_address = ('', 8080)
+  httpd = BaseHTTPServer.HTTPServer(server_address, Handler)
+  httpd.serve_forever()
+#+end_src
+
+#+RESULTS:
+
+** Ideas; do not take action until TODOs are DONE.
+*** Extensions
+Python is a good language for scripting, but it is a strange language to extend
+other applications with. Lua should be used for extensions, given the Morrowind
+community has nestled into bed with Lua in MWSE and OpenMW; there's no sense
+fighting that momentum with something like Guile Scheme or any other extension
+language.
+
+* Software development methodology
+** Test-driven development
+If testing drives development then tests are written prior to other behaviours.
+However, given that the application already exists and its specification is the
+implementation used, how could TDD be applied?
+
+** Behaviour-driven development
+
+* Pylint provides [[https://pylint.readthedocs.io/en/latest/additional_tools/pyreverse/index.html][=pyreverse=]], a tool to generate diagrams from code

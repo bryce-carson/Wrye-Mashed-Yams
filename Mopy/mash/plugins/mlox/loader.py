@@ -48,11 +48,15 @@ def findMlox(mloxexe, exclusions, target):  # Polemos
     for root, dirs, files in scandir.walk(target, topdown=True):
         [dirs.remove(x) for x in list(dirs) if x.lower() in exclusions]
         x = [os.path.join(root, file) for file in files if file == mloxexe]
-        if x: return x[0]
+        if x:
+            return x[0]
 
 
 def Mlox_The_Path(mloxexe, exclusions, target):  # Polemos
     """Returns mlox path."""
-    if os.path.dirname(target) == target: return ''  # Avoid root pls...
-    try: return findMlox(mloxexe, exclusions, target)
-    except: return ''
+    if os.path.dirname(target) == target:
+        return ""  # Avoid root pls...
+    try:
+        return findMlox(mloxexe, exclusions, target)
+    except:
+        return ""

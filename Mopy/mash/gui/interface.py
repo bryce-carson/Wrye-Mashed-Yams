@@ -31,25 +31,27 @@ from ..unimash import _
 from .. import singletons
 
 # Default Style
-style = {
-    'mouse.hover': wx.RED,
-    'lists.font.color': None
-}
+style = {"mouse.hover": wx.RED, "lists.font.color": None}
 
 # Internal per setting styling
 internalStyle = {
-    'big.font': (12, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_LIGHT),
-    'list.background': (220, 220, 255)
+    "big.font": (12, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_LIGHT),
+    "list.background": (220, 220, 255),
 }
 
-def setIcon(parent, icon=None, text='', type=wx.BITMAP_TYPE_ANY):
+
+def setIcon(parent, icon=None, text="", type=wx.BITMAP_TYPE_ANY):
     """Set icon of caller window."""
     if icon is not None:
         try:
             parent.SetIcon(wx.Icon(icon, type), text)
             return
-        except: pass  # If for a reason the image is missing.
-    parent.SetIcon(wx.Icon(os.path.join('images', 'Wrye Mash.ico'), wx.BITMAP_TYPE_ICO), u'Wrye Mash')
+        except:
+            pass  # If for a reason the image is missing.
+    parent.SetIcon(
+        wx.Icon(os.path.join("images", "Wrye Mash.ico"), wx.BITMAP_TYPE_ICO),
+        "Wrye Mash",
+    )
 
 
 class ThemeEngine:
@@ -58,31 +60,52 @@ class ThemeEngine:
     def __init__(self, theme):
         """Init."""
         self.checkThemeDir()
-        if theme != ('Default theme', None): self.importTheme(theme[1])
+        if theme != ("Default theme", None):
+            self.importTheme(theme[1])
         # Create dummy theme
-        '''theme = {
+        """theme = {
             'theme.info': 'Black fonts for windows High Contrast theme, by Polemos',
             'lists.font.color': (255, 0, 0, 255)
         }
-        self.exportTheme('Black_fonts_for_High_Contrast.mtf', theme)'''
+        self.exportTheme('Black_fonts_for_High_Contrast.mtf', theme)"""
 
     def checkThemeDir(self):
         """Check if it exists and recreate if needed the theme dir."""
-        self.themedir = os.path.join(singletons.MashDir, 'themes')
-        if not os.path.isdir(self.themedir): os.makedirs(self.themedir)
+        self.themedir = os.path.join(singletons.MashDir, "themes")
+        if not os.path.isdir(self.themedir):
+            os.makedirs(self.themedir)
 
     def importTheme(self, theme):
         """Import theme."""
         themePath = os.path.join(self.themedir, theme)
-        with open(themePath, 'r') as rawTheme: themeData = json.load(rawTheme)
-        for x in themeData: style[x]=themeData[x]
+        with open(themePath, "r") as rawTheme:
+            themeData = json.load(rawTheme)
+        for x in themeData:
+            style[x] = themeData[x]
 
     def exportTheme(self, theme, rawTheme):
         """Export theme."""
         themePath = os.path.join(self.themedir, theme)
-        themeData = ('{\r\n\r\n', (',\r\n'.join(('"%s": %s' if type(rawTheme[x]) is tuple else '"%s": "%s"') %
-            (x, list(rawTheme[x]) if type(rawTheme[x]) is tuple else rawTheme[x]) for x in rawTheme)), '\r\n\r\n}')
-        with open(themePath, 'w') as themeFile: themeFile.writelines(themeData)
+        themeData = (
+            "{\r\n\r\n",
+            (
+                ",\r\n".join(
+                    ('"%s": %s' if type(rawTheme[x]) is tuple else '"%s": "%s"')
+                    % (
+                        x,
+                        (
+                            list(rawTheme[x])
+                            if type(rawTheme[x]) is tuple
+                            else rawTheme[x]
+                        ),
+                    )
+                    for x in rawTheme
+                )
+            ),
+            "\r\n\r\n}",
+        )
+        with open(themePath, "w") as themeFile:
+            themeFile.writelines(themeData)
 
 
 class SysTray(wx.TaskBarIcon):
@@ -108,14 +131,23 @@ class SysTray(wx.TaskBarIcon):
         """Systray context menu."""
         # Menu items
         menu = wx.Menu()
-        runGame = menu.AppendCheckItem(wx.NewId(), _(u'Launch %s') % (u'Morrowind' if not self.openmw else u'OpenMW'))
+        runGame = menu.AppendCheckItem(
+            wx.NewId(), _("Launch %s") % ("Morrowind" if not self.openmw else "OpenMW")
+        )
         menu.AppendSeparator()
-        openApp = menu.Append(wx.NewId(), _(u'Open Wrye Mash'))
-        exit = menu.Append(wx.NewId(), _(u'Exit'))
+        openApp = menu.Append(wx.NewId(), _("Open Wrye Mash"))
+        exit = menu.Append(wx.NewId(), _("Exit"))
+
         # Menu actions
-        def runGameDef(event): self.mainFrame.systrayRun(None)
-        def OpenAppDef(event): self.OnSyTrayLeftClick(None)
-        def ExitDef(event): self.mainFrame.OnCloseWindow(None)
+        def runGameDef(event):
+            self.mainFrame.systrayRun(None)
+
+        def OpenAppDef(event):
+            self.OnSyTrayLeftClick(None)
+
+        def ExitDef(event):
+            self.mainFrame.OnCloseWindow(None)
+
         # Menu events
         self.Bind(wx.EVT_MENU, runGameDef, runGame)
         self.Bind(wx.EVT_MENU, OpenAppDef, openApp)

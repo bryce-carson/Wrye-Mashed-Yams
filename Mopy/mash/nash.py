@@ -42,16 +42,16 @@ os.environ["REQUESTS_CA_BUNDLE"] = "cacert.pem"
 
 def wrye_download_site(url, mode):
     """Mirrors and download site of Wrye Mash."""
-    if url == 'home':
+    if url == "home":
         if not mode:  # Regular Morrowind
-            return 'https://www.nexusmods.com/morrowind/mods/45439'
+            return "https://www.nexusmods.com/morrowind/mods/45439"
         else:  # OpenMW/TES3mp
-            return 'https://www.nexusmods.com/morrowind/mods/46935'
-    if url == 'download':
+            return "https://www.nexusmods.com/morrowind/mods/46935"
+    if url == "download":
         if not mode:  # Regular Morrowind
-            return 'https://www.nexusmods.com/morrowind/mods/45439?tab=files'
+            return "https://www.nexusmods.com/morrowind/mods/45439?tab=files"
         else:  # OpenMW/TES3mp
-            return 'https://www.nexusmods.com/morrowind/mods/46935?tab=files'
+            return "https://www.nexusmods.com/morrowind/mods/46935?tab=files"
 
 
 class WryeWeb:
@@ -60,7 +60,7 @@ class WryeWeb:
     def __init__(self, mode):
         """Init."""
         self.openmw = mode
-        self.mash_net = wrye_download_site('home', self.openmw)
+        self.mash_net = wrye_download_site("home", self.openmw)
 
     def get_mash_ver(self):
         """Parse Nexus page."""
@@ -70,10 +70,11 @@ class WryeWeb:
             page = requests.get(self.mash_net)
             tree = html.fromstring(page.content)
             get_ver = tree.xpath('//*[@id="pagetitle"]/ul[2]/li[5]/div/div[2]')
-            self.mash_net_ver = int(('%s' % (get_ver[0].text.strip().replace('v', ''))))
+            self.mash_net_ver = int(("%s" % (get_ver[0].text.strip().replace("v", ""))))
             progress.update()
             result = self.mash_net_ver
-        except: result = 'error'
+        except:
+            result = "error"
         finally:
             progress.Destroy()
             return result
@@ -85,13 +86,15 @@ class VisitWeb:
     def __init__(self, webData):
         """Init."""
         repo, ID = webData
-        if repo == 'Nexus': self.Nexus(ID)
-        #elif repo ==...
-        else: return
+        if repo == "Nexus":
+            self.Nexus(ID)
+        # elif repo ==...
+        else:
+            return
 
     def Nexus(self, ID):
         """Nexus site implementation."""
-        nexusWeb = 'https://www.nexusmods.com/morrowind/mods/%s' % ID
+        nexusWeb = "https://www.nexusmods.com/morrowind/mods/%s" % ID
         self.visit(nexusWeb)
 
     def visit(self, website):

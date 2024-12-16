@@ -63,23 +63,53 @@ class WxOutputRedirect:
         """Return error msgs."""
         wx.CallAfter(self.frame.Show)
         wx.CallAfter(self.frame.Raise)
-        try: wx.CallAfter(self.log.WriteText, message)  # Polemos: Korean fix (possibly more)
-        except UnicodeDecodeError: wx.CallAfter(self.log.WriteText, uniChk(message))
+        try:
+            wx.CallAfter(
+                self.log.WriteText, message
+            )  # Polemos: Korean fix (possibly more)
+        except UnicodeDecodeError:
+            wx.CallAfter(self.log.WriteText, uniChk(message))
         wx.CallAfter(self.std.write, message)
 
 
 class ErrorLog(wx.Dialog):  # Polemos
     """A class to display errors."""
 
-    def __init__(self, parent, style=wx.DEFAULT_DIALOG_STYLE|wx.MAXIMIZE_BOX|wx.MINIMIZE_BOX|wx.RESIZE_BORDER|wx.STAY_ON_TOP):
+    def __init__(
+        self,
+        parent,
+        style=wx.DEFAULT_DIALOG_STYLE
+        | wx.MAXIMIZE_BOX
+        | wx.MINIMIZE_BOX
+        | wx.RESIZE_BORDER
+        | wx.STAY_ON_TOP,
+    ):
         """Init."""
-        self.parent=parent
-        if not conf.settings['show.debug.log']: return
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=_(u'Debug Log'), pos=dPos, size=(415, 249), style=style)
+        self.parent = parent
+        if not conf.settings["show.debug.log"]:
+            return
+        wx.Dialog.__init__(
+            self,
+            parent,
+            id=wx.ID_ANY,
+            title=_("Debug Log"),
+            pos=dPos,
+            size=(415, 249),
+            style=style,
+        )
         # Contents
-        self.text_log = wx.TextCtrl(self, wx.ID_ANY, '', dPos, dSize, wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_RICH)
-        self.saveBtn = wx.Button(self, wx.ID_ANY, _(u'Save Log'), dPos, (-1, 22), 0)
-        self.fcloseBtn = wx.Button(self, wx.ID_ANY, _(u'Force Close Wrye Mash...'), dPos, (-1, 22), 0)
+        self.text_log = wx.TextCtrl(
+            self,
+            wx.ID_ANY,
+            "",
+            dPos,
+            dSize,
+            wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH,
+        )
+        self.saveBtn = wx.Button(self, wx.ID_ANY, _("Save Log"), dPos, (-1, 22), 0)
+        self.fcloseBtn = wx.Button(
+            self, wx.ID_ANY, _("Force Close Wrye Mash..."), dPos, (-1, 22), 0
+        )
         # Theming
         self.SetForegroundColour(wx.Colour(255, 255, 255))
         self.SetBackgroundColour(wx.Colour(240, 240, 240))
@@ -92,17 +122,27 @@ class ErrorLog(wx.Dialog):  # Polemos
         sys.stderr = WxOutputRedirect(sys.stderr, self, self.text_log)
         # Layout
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        btnSizer.AddMany([(self.saveBtn, 1, wx.EXPAND|wx.RIGHT, 5), (self.fcloseBtn, 0, wx.EXPAND, 5)])
+        btnSizer.AddMany(
+            [
+                (self.saveBtn, 1, wx.EXPAND | wx.RIGHT, 5),
+                (self.fcloseBtn, 0, wx.EXPAND, 5),
+            ]
+        )
         mainSizer = wx.BoxSizer(wx.VERTICAL)
-        mainSizer.AddMany([(self.text_log, 1, wx.EXPAND, 5), (btnSizer, 0, wx.EXPAND, 5)])
+        mainSizer.AddMany(
+            [(self.text_log, 1, wx.EXPAND, 5), (btnSizer, 0, wx.EXPAND, 5)]
+        )
         self.SetSizer(mainSizer)
         self.Layout()
         self.Centre(wx.BOTH)
 
     def forceClose(self, event):
         """Force close Wrye Mash."""
-        warning = _(u'Really force Wrye Mash to quit?\n\nDo this only if Wrye Mash is stuck ad infinitum in the debug log!!!')
-        if gui.WarningQuery(self, warning, _(u'Are you sure?')) == wx.ID_NO: return
+        warning = _(
+            "Really force Wrye Mash to quit?\n\nDo this only if Wrye Mash is stuck ad infinitum in the debug log!!!"
+        )
+        if gui.WarningQuery(self, warning, _("Are you sure?")) == wx.ID_NO:
+            return
         self.Destroy()
         # Polemos: This is not a graceful exit. We could have exited gracefully by calling "self.parent.OnCloseWindow(None)" but
         # this may introduce undesired side-effects (conf corruption for example).
@@ -111,10 +151,17 @@ class ErrorLog(wx.Dialog):  # Polemos
 
     def savelog(self, event):
         """Save the log."""
-        dialog = wx.FileDialog(self, _(u'Save log'), singletons.MashDir, "Debug", '*.log', wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
+        dialog = wx.FileDialog(
+            self,
+            _("Save log"),
+            singletons.MashDir,
+            "Debug",
+            "*.log",
+            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
+        )
         if dialog.ShowModal() == wx.ID_OK:
             fileName = os.path.join(dialog.GetDirectory(), dialog.GetFilename())
-            with io.open(fileName, 'w', encoding='utf-8', errors='replace') as fl:
+            with io.open(fileName, "w", encoding="utf-8", errors="replace") as fl:
                 fl.write(self.text_log.GetValue())
 
     def OnClose(self, event):

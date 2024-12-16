@@ -181,7 +181,9 @@ class Path(object): # Polemos: Unicode fixes.
         return len(self._s)
 
     def __repr__(self):
-        return "bolt.Path(%s)" % `self._s`
+        # return "bolt.Path(%s)" % `self._s`
+        return f'bolt.Path({self._s})'
+
 
     #--Properties--------------------------------------------------------
     #--String/unicode versions.
@@ -307,11 +309,13 @@ class Path(object): # Polemos: Unicode fixes.
             args = ushlex.split('7z.exe h "%s"' % self.s)
             ins = Popen(args, bufsize=-1, stdout=PIPE, creationflags=DETACHED_PROCESS)
             return int([x for x in ins.stdout][14].split(':')[1], 16)
-        crc = 0L
+        # crc = 0L
+        crc = 0
         with self.open('rb', 65536) as ins:
             for x in xrange((self.size / 65536) + 1):
                 crc = crc32(ins.read(65536), crc)
-        return crc if crc > 0 else 4294967296L + crc
+        # return crc if crc > 0 else 4294967296L + crc
+        return crc if crc > 0 else 4294967296 + crc
 
     #--Path stuff -------------------------------------------------------
     #--New Paths, subpaths
@@ -457,7 +461,8 @@ class Path(object): # Polemos: Unicode fixes.
         """Remove Read only attribute."""
         def write_on(path):
             try: os.chmod(path, stat.S_IWRITE)                # Part pythonic,
-            except: check_call(ur'attrib -R %s /S' % (path))  # part hackish (Yeah I know).
+            # except: check_call(ur'attrib -R %s /S' % (path))  # part hackish (Yeah I know).
+            except: check_call(f'attrib -R {path} /S')  # part hackish (Yeah I know).
         try:
             write_on(path)
             if action is None: return
@@ -549,13 +554,15 @@ class Flags(object):
     #--Generation
     def __init__(self,value=0,names=None):
         """Initialize. Attrs, if present, is mapping of attribute names to indices. See getAttrs()"""
-        object.__setattr__(self,'_field',int(value) | 0L)
+        # object.__setattr__(self,'_field',int(value) | 0L)
+        object.__setattr__(self,'_field',int(value) | 0)
         object.__setattr__(self,'_names',names or {})
 
     def __call__(self,newValue=None):
         """Retuns a clone of self, optionally with new value."""
         if newValue is not None:
-            return Flags(int(newValue) | 0L,self._names)
+            # return Flags(int(newValue) | 0L,self._names)
+            return Flags(int(newValue) | 0,self._names)
         else: return Flags(self._field,self._names)
 
     def __deepcopy__(self, memo=None):
@@ -584,8 +591,10 @@ class Flags(object):
 
     def __setitem__(self,index,value):
         """Set value by index. E.g., flags[3] = True"""
-        value = ((value or 0L) and 1L) << index
-        mask = 1L << index
+        # value = ((value or 0L) and 1L) << index
+        value = ((value or 0) and 1) << index
+        # mask = 1L << index
+        mask = 1 << index
         self._field = ((self._field & ~mask) | value)
 
     #--As class
@@ -1102,13 +1111,15 @@ class ArchiveInfo:  # Polemos
 
     def parseArchiveFiles(self):
         """Get Package special files data."""
-        cmd = ur'7z.exe l -slt -sccUTF-8 "%s" *.esp *.esm *.bsa *.omwgame *.omwaddon *.ttf *.fnt -r' % self.package_path
+        # cmd = ur'7z.exe l -slt -sccUTF-8 "%s" *.esp *.esm *.bsa *.omwgame *.omwaddon *.ttf *.fnt -r' % self.package_path
+        cmd = f'7z.exe l -slt -sccUTF-8 "{self.package_path}" *.esp *.esm *.bsa *.omwgame *.omwaddon *.ttf *.fnt -r'
         files_path = self.parser(cmd)
         self.mwfiles = self.dataFactory(files_path, tree=False)
 
     def parseArchiveStructure(self):
         """Get package structure data."""
-        cmd = ur'7z.exe l -slt -sccUTF-8 "%s" -r *\\ -xr!*\\*.*' % self.package_path
+        # cmd = ur'7z.exe l -slt -sccUTF-8 "%s" -r *\\ -xr!*\\*.*' % self.package_path
+        cmd = fr'7z.exe l -slt -sccUTF-8 "{self.package_path}" -r *\ -xr!*\*.*'
         package_folders = self.parser(cmd)
         self.package_paths = self.dataFactory(package_folders)
 
@@ -1147,18 +1158,21 @@ class MultiThreadGauge:  # Polemos
     def __init__(self, window, packData, mode='unpack'):
         """Init..."""
         self.mode = mode
-        if mode == 'unpack':
+        if (mode == "unpack"):
             package_tempdir, package_path, data_files = packData
-            title = _(u'Unpacking...')
-            if data_files == '\\': data_files = ''
-            else: data_files = '"%s*"' % data_files
-            cmd = ur'7z.exe -bb -bsp1 x "%s" %s -o"%s" -aoa -scsUTF-8' % (package_path, data_files, package_tempdir)
-            self.getmodlen(ur'7z.exe l "%s" %s' % (package_path, data_files))
-        if mode == 'pack':
+            title = _(u"Unpacking...")
+            if data_files == "\\":
+                data_files = ""
+            else:
+                data_files = f'"{data_files}*"'
+            # cmd = ur'7z.exe -bb -bsp1 x "%s" %s -o"%s" -aoa -scsUTF-8' % (package_path, data_files, package_tempdir)
+            cmd = f'7z.exe -bb -bsp1 x "{package_path}" {data_files} -o"{package_tempdir}" -aoa -scsUTF-8'
+            self.getmodlen(fr'7z.exe l "{package_path}" {data_files}'
+        if (mode == 'pack'):
             pack_source, pack_target = packData
-            if pack_target.endswith('.rar'): pack_target = '%s.7z' % pack_target[:-4]
+            if pack_target.endswith('.rar'): pack_target = f'{pack_target[:-4]}.7z'
             title = _(u'Packing...')
-            cmd = ur'7z.exe -bb -bsp1 a "%s" "%s\*"' % (pack_target, pack_source)
+            cmd = f'7z.exe -bb -bsp1 a "{pack_target}" "{pack_source}\*"'
             cmd = cmd.replace('\\','/')
         self.cmd = cmd
         import gui.dialog as gui
@@ -1230,7 +1244,9 @@ class MainFunctions:
         key = attrs.pop(0)
         func = self.funcs.get(key)
         if not func:
-            print _(u'Unknown function/object:'), key
+            # Old Python 2 code
+            # print _(u'Unknown function/object:'), key
+            print(gettext.gettext(u'Unknown function/object:'), key)
             return
         for attr in attrs: func = getattr(func,attr)
         #--Separate out keywords args
@@ -1691,7 +1707,9 @@ def deprint(*args,**keyargs):
     import inspect
     stack = inspect.stack()
     file,line,function = stack[1][1:4]
-    print '%s %4d %s: %s' % (GPath(file).tail.s,line,function,' '.join(map(str,args)))
+    # Old Python 2 code.
+    # print '%s %4d %s: %s' % (GPath(file).tail.s, line, function, ' '.join(map(str, args)))
+    print(f"{GPath(file).tail.s} {line:4d} {function}: {' '.join(map(str, args))}")
 
 
 def delist(header,items,on=False):
@@ -1700,21 +1718,14 @@ def delist(header,items,on=False):
     import inspect
     stack = inspect.stack()
     file,line,function = stack[1][1:4]
-    print '%s %4d %s: %s' % (GPath(file).tail.s,line,function,str(header))
-    if items is None: print '> None'
+    # Old Python 2 code.
+    # print '%s %4d %s: %s' % (GPath(file).tail.s,line,function,str(header))
+    print(f"{GPath(file).tail.s} {line:4d} {function}: {str(header)}")
+    if items is None: print('> None')
     else:
-        for indexItem in enumerate(items): print '>%2d: %s' % indexItem
-
-
-def dictFromLines(lines,sep=None):  # Polemos: Is this used anywhere...?
-    """Generate a dictionary from a string with lines, stripping comments and skipping empty strings."""
-    reComment = re.compile('#.*')
-    temp = [reComment.sub('',x).strip() for x in lines.split('\n')]
-    if sep is None or type(sep) == type(''):
-        temp = dict([x.split(sep,1) for x in temp if x])
-    else: #--Assume re object.
-        temp = dict([sep.split(x,1) for x in temp if x])
-    return temp
+        # for indexItem in enumerate(items): print '>%2d: %s' % indexItem
+        for index, item in enumerate(items):
+            print(f">{index:%2d} {item}")
 
 
 def getMatch(reMatch,group=0):
@@ -1876,7 +1887,9 @@ class Progress:
         """Update progress with current state. Progress is state/full."""
         if (1.0*self.full) == 0: raise ArgumentError(_(u'Full must be non-zero!'))
         if message: self.message = message
-        if self.debug: deprint('%0.3f %s' % (1.0*state/self.full, self.message))
+        # Old Python 2 code.
+        # if self.debug: deprint('%0.3f %s' % (1.0*state/self.full, self.message))
+        if self.debug: deprint(f'{1.0*state/self.full:.3f} {self.message}')
         self.doProgress(1.0*state/self.full, self.message)
         self.state = state
 

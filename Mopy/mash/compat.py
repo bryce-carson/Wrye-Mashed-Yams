@@ -48,26 +48,28 @@ provides a workaround to enable the renaming of files
 import sys
 import cPickle
 
+
 def findClass(module, name):
     """Find class implementation. The same as pickle.Unpickler.find_class but translates module names"""
-    if module in ('bolt', 'masher', 'balt', 'mash', 'mosh', 'mush'):
-        module = 'mash.' + module
+    if module in ("bolt", "masher", "balt", "mash", "mosh", "mush"):
+        module = "mash." + module
 
     __import__(module)
     mod = sys.modules[module]
     klass = getattr(mod, name)
     return klass
 
+
 def uncpickle(fPath):  # Polemos: Compatibility fix
     """Same as cPickle.loads(f) but does module name translation"""
     if type(fPath) is unicode or type(fPath) is str:
         try:
-            with open(fPath, 'rb') as f:
+            with open(fPath, "rb") as f:
                 pickleObj = cPickle.Unpickler(f)
                 pickleObj.find_global = findClass
                 return pickleObj.load()
         except:
-            with open(fPath, 'r') as f:
+            with open(fPath, "r") as f:
                 # Polemos: The Python 2.x version of pickle has a
                 # bug when in binary (slightly more efficient but
                 # also needed for newer protocols), thus besides

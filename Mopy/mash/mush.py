@@ -107,61 +107,67 @@ SPLM +
 """
 
 # Installer
-bethDataFiles = {'morrowind.esm', 'tribunal.esm', 'bloodmoon.esm', 'morrowind.bsa', 'tribunal.bsa', 'bloodmoon.bsa'}
+bethDataFiles = {
+    "morrowind.esm",
+    "tribunal.esm",
+    "bloodmoon.esm",
+    "morrowind.bsa",
+    "tribunal.bsa",
+    "bloodmoon.bsa",
+}
 
 # Game Info ===================================================================
 # Skill Related
 
 primaryAttributes = (
-"Agility",
-"Endurance",
-"Intelligence",
-"Personality",
-"Speed",
-"Strength",
-"Willpower",
-"Luck",
+    "Agility",
+    "Endurance",
+    "Intelligence",
+    "Personality",
+    "Speed",
+    "Strength",
+    "Willpower",
+    "Luck",
 )
 
 combatSkills = (
-"Armorer",
-"Athletics",
-"Axe",
-"Block",
-"Blunt Weapon",
-"Heavy Armor",
-"Long Blade",
-"Medium Armor",
-"Spear",
+    "Armorer",
+    "Athletics",
+    "Axe",
+    "Block",
+    "Blunt Weapon",
+    "Heavy Armor",
+    "Long Blade",
+    "Medium Armor",
+    "Spear",
 )
 
 magicSkills = (
-"Alchemy",
-"Alteration",
-"Conjuration",
-"Destruction",
-"Enchant",
-"Illusion",
-"Mysticism",
-"Restoration",
-"Unarmored",
+    "Alchemy",
+    "Alteration",
+    "Conjuration",
+    "Destruction",
+    "Enchant",
+    "Illusion",
+    "Mysticism",
+    "Restoration",
+    "Unarmored",
 )
 
 stealthSkills = (
-"Acrobatics",
-"Hand To Hand",
-"Light Armor",
-"Marksman",
-"Mercantile",
-"Security",
-"Short Blade",
-"Sneak",
-"Speechcraft",
+    "Acrobatics",
+    "Hand To Hand",
+    "Light Armor",
+    "Marksman",
+    "Mercantile",
+    "Security",
+    "Short Blade",
+    "Sneak",
+    "Speechcraft",
 )
 
 # Wrye Level Set ==============================================================
-charSet0 = \
-"""begin wr_lev${className}GS
+charSet0 = """begin wr_lev${className}GS
 short action
 short stemp
 short level
@@ -229,16 +235,14 @@ if ( level > 30 )
 endif
 """
 
-charSet1 = \
-"""messagebox "You now follow the Way of the ${className}, level %g." level
+charSet1 = """messagebox "You now follow the Way of the ${className}, level %g." level
 playSound skillraise
 set action to 100
 end"""
 
 # Library Generator ===========================================================
 # Templates
-libGenMain = (
-"""begin ${libId}LS
+libGenMain = """begin ${libId}LS
 short disabled
 short action
 
@@ -270,20 +274,18 @@ elseif ( player->getItemCount "${srcId}" )
 ${ifAltId}endif
 set action to lib_action
 
-end""")
+end"""
 
-libGenIfAltId = (
-"""elseif ( player->getItemCount "${altId}" )
+libGenIfAltId = """elseif ( player->getItemCount "${altId}" )
     set lib_actionCount to lib_actionCount + 1
     set ${libId}G to 1
-""")
+"""
 
 # Scheduling ==================================================================
 # Templates
 
-#--Master
-scheduleMaster = (
-"""begin SC_${town}_Master
+# --Master
+scheduleMaster = """begin SC_${town}_Master
 dontSaveObject
 if ( menuMode )
 	return
@@ -326,11 +328,10 @@ else
 	return
 endif
 end
-""")
+"""
 
-#--Cycle
-scheduleCycle1 = (
-"""begin SC_${town}_${cycle}
+# --Cycle
+scheduleCycle1 = """begin SC_${town}_${cycle}
 short action
 float timer
 if ( action == 0 ) ;--First pass
@@ -359,21 +360,19 @@ if ( action == 0 )
 	endif
 ${cycleCode}endif
 
-""")
+"""
 
-#--Sleep
-scheduleSleep0 = (
-"""begin SC_${town}_C${cycle}
+# --Sleep
+scheduleSleep0 = """begin SC_${town}_C${cycle}
 ;--Null sleep script. Should never be run, but just in case...
 if ( cellChanged )
 	set SC_Sleep to 0
 	stopScript SC_${town}_C${cycle}
 endif
 end
-""")
+"""
 
-scheduleSleep1 = (
-"""begin SC_${town}_C${cycle}
+scheduleSleep1 = """begin SC_${town}_C${cycle}
 short prevState
 
 if ( prevState != SC_${town}_State )
@@ -386,19 +385,17 @@ endif
 if ( SC_${town}_State != ${cycle} )
 	set SC_Sleep to 0
 	stopScript SC_${town}_C${cycle}
-""")
+"""
 
-scheduleSleep2 = (
-"""else
+scheduleSleep2 = """else
 	set SC_Sleep to 0
 	stopScript SC_${town}_C${cycle}
 endif
 end
-""")
+"""
 
-#--Reset
-scheduleReset0 = (
-"""begin SC_${project}_ResetGS
+# --Reset
+scheduleReset0 = """begin SC_${project}_ResetGS
 ;--Resets schedules to morning schedule for all towns.
 float timer
 short playBells
@@ -408,21 +405,19 @@ if ( timer < 0 )
     set timer to timer + getSecondsPassed
     return
 endif
-""")
+"""
 
-scheduleReset1 = (
-"""if ( SC_${town}_State > 0 )
+scheduleReset1 = """if ( SC_${town}_State > 0 )
     messagebox "Resetting $town..."
     startScript SC_${town}_1
     set timer to -2.0
 endif
-""")
+"""
 
-scheduleReset2 = (
-"""messagebox "All towns reset."
+scheduleReset2 = """messagebox "All towns reset."
 set SC_PlayBells to playBells
 stopScript SC_${project}_ResetGS
-end""")
+end"""
 
 # Defs
 scheduleDefs = """

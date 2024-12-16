@@ -46,72 +46,121 @@ import time
 import Queue as queue
 from ... import conf, singletons
 
-class HelperMixin: # Polemos fixes.
+
+class HelperMixin:  # Polemos fixes.
 
     def getSubprocess(self, args):
-        if os.name == 'nt':
+        if os.name == "nt":
             # Hide the command prompt on NT systems
             info = subprocess.STARTUPINFO()
             info.dwFlags |= 0x00000001
-        cmd_po = 'tes3cmd.exe'
-        args_po = ''
+        cmd_po = "tes3cmd.exe"
+        args_po = ""
         try:
             for x in args:
-                if x.lower().endswith('.esp') or x.lower().endswith('.esm') or x.lower().endswith('.ess'): x = '"%s"' % x
-                if x != 'tes3cmd.exe': args_po = '%s %s' % (args_po, x)
-        except: args_po = ''
+                if (
+                    x.lower().endswith(".esp")
+                    or x.lower().endswith(".esm")
+                    or x.lower().endswith(".ess")
+                ):
+                    x = '"%s"' % x
+                if x != "tes3cmd.exe":
+                    args_po = "%s %s" % (args_po, x)
+        except:
+            args_po = ""
         # Polemos: Tired trying to work with Mary Popens buggy attitude. Be my guest.
         command = 'cd /D "%s" & %s%s' % (getDataDir(), cmd_po, args_po)
-        return Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        return Popen(
+            command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE
+        )
 
     def buildFixitArgs(self, hideBackups, backupDir):
-        args = ['tes3cmd.exe', 'fixit']
-        if hideBackups: args.append('--hide-backups')
-        if backupDir: args += ['--backup-dir', backupDir]
+        args = ["tes3cmd.exe", "fixit"]
+        if hideBackups:
+            args.append("--hide-backups")
+        if backupDir:
+            args += ["--backup-dir", backupDir]
         return args
 
     def buildMultipatchArgs(self):  # Polemos: Added Multipatch ability.
         """Args factory"""
-        args = ['tes3cmd.exe', 'multipatch ']
+        args = ["tes3cmd.exe", "multipatch "]
         return args
 
-    def syncHeadMastArgs(self, files):  # Polemos: Added Sync Headers/Master ability by Abot.
+    def syncHeadMastArgs(
+        self, files
+    ):  # Polemos: Added Sync Headers/Master ability by Abot.
         """Args factory"""
-        args = ['tes3cmd.exe', 'header', '--synchronize', '--debug', '--hide-backups', '--backup-dir', 'tes3cmdbck'] + files
+        args = [
+            "tes3cmd.exe",
+            "header",
+            "--synchronize",
+            "--debug",
+            "--hide-backups",
+            "--backup-dir",
+            "tes3cmdbck",
+        ] + files
         return args
 
     def mergeArgs(self, files):  # Polemos: Added Merge records by Abot.
         """Args factory"""
-        args = ['tes3cmd.exe', 'dumb', '--debug', '--raw-with-header'] + files
+        args = ["tes3cmd.exe", "dumb", "--debug", "--raw-with-header"] + files
         return args
 
-    def buildCleanArgs(self, files, replace, hideBackups, backupDir, cells, dups, gmsts, instances, junk):
+    def buildCleanArgs(
+        self,
+        files,
+        replace,
+        hideBackups,
+        backupDir,
+        cells,
+        dups,
+        gmsts,
+        instances,
+        junk,
+    ):
         """Args factory"""
-        if not (cells or dups or gmsts or instances or junk): raise Exception(u'No options selected')
-        args = ['tes3cmd.exe', 'clean']
-        if replace: args.append('--replace')
-        if hideBackups: args.append('--hide-backups')
-        if backupDir: args += ['--backup-dir', backupDir]
+        if not (cells or dups or gmsts or instances or junk):
+            raise Exception("No options selected")
+        args = ["tes3cmd.exe", "clean"]
+        if replace:
+            args.append("--replace")
+        if hideBackups:
+            args.append("--hide-backups")
+        if backupDir:
+            args += ["--backup-dir", backupDir]
         # if everything is true then we don't need to set any of the options
         if cells and dups and gmsts and instances and junk:
             args += files
             return args
-        if cells: args.append('--cell-params')
-        if dups: args.append('--dups')
-        if gmsts: args.append('--gmsts')
-        if instances: args.append('--instances')
-        if junk: args.append('--junk-cells')
+        if cells:
+            args.append("--cell-params")
+        if dups:
+            args.append("--dups")
+        if gmsts:
+            args.append("--gmsts")
+        if instances:
+            args.append("--instances")
+        if junk:
+            args.append("--junk-cells")
         args += files
         return args
 
-    def buildHeaderArgs(self, file, hideBackups, backupDir, sync, updateMasters, updateRecordCount):
-        args = ['tes3cmd.exe', 'header']
-        if hideBackups: args.append('--hide-backups')
-        if backupDir: args += ['--backup-dir', backupDir]
+    def buildHeaderArgs(
+        self, file, hideBackups, backupDir, sync, updateMasters, updateRecordCount
+    ):
+        args = ["tes3cmd.exe", "header"]
+        if hideBackups:
+            args.append("--hide-backups")
+        if backupDir:
+            args += ["--backup-dir", backupDir]
 
-        if sync: args.append('--synchronize')
-        if updateMasters: args.append('--update-masters')
-        if updateRecordCount: args.append('--update-record-count')
+        if sync:
+            args.append("--synchronize")
+        if updateMasters:
+            args.append("--update-masters")
+        if updateRecordCount:
+            args.append("--update-record-count")
         args.append(file)
         return args
 
@@ -119,7 +168,7 @@ class HelperMixin: # Polemos fixes.
 class Basic(HelperMixin):  # Polemos fixes.
     """Basic."""
 
-    def fixit(self, hideBackups=True, backupDir='tes3cmdbck'):
+    def fixit(self, hideBackups=True, backupDir="tes3cmdbck"):
         """Fixit."""
         args = self.buildFixitArgs(hideBackups, backupDir)
         self.out, self.err = self.getSubprocess(args).communicate()
@@ -152,27 +201,50 @@ class Threaded(threading.Thread, HelperMixin):
         threading.Thread.__init__(self)
         self.msg = queue.Queue()
         self.callback = callback
-        self.err = self.out = ''
+        self.err = self.out = ""
 
     def stop(self):
         """
         Stops the execution of the thread. You must join the thread after
         calling this as it isn't instant. This is safe to call from another thread
         """
-        self.msg.put('STOP')
+        self.msg.put("STOP")
 
-    def fixit(self, hideBackups=True, backupDir='tes3cmdbck'):
+    def fixit(self, hideBackups=True, backupDir="tes3cmdbck"):
         self.args = self.buildFixitArgs(hideBackups, backupDir)
         self.start()
 
-    def clean(self, files, replace=False, hideBackups=True, backupDir='tes3cmdbck', cells=True, dups=True, gmsts=True, instances=True, junk=True):
+    def clean(
+        self,
+        files,
+        replace=False,
+        hideBackups=True,
+        backupDir="tes3cmdbck",
+        cells=True,
+        dups=True,
+        gmsts=True,
+        instances=True,
+        junk=True,
+    ):
         self.files = files
-        self.args = self.buildCleanArgs(files, replace, hideBackups, backupDir, cells, dups, gmsts, instances, junk)
+        self.args = self.buildCleanArgs(
+            files, replace, hideBackups, backupDir, cells, dups, gmsts, instances, junk
+        )
         self.start()
 
-    def header(self, file, hideBackups=True, backupDir='tes3cmdbck', sync=True, updateMasters=False, updateRecordCount=False):
+    def header(
+        self,
+        file,
+        hideBackups=True,
+        backupDir="tes3cmdbck",
+        sync=True,
+        updateMasters=False,
+        updateRecordCount=False,
+    ):
         self.files = [file]
-        self.args = self.buildHeaderArgs(file, hideBackups, backupDir, sync, updateMasters, updateRecordCount)
+        self.args = self.buildHeaderArgs(
+            file, hideBackups, backupDir, sync, updateMasters, updateRecordCount
+        )
         self.start()
 
     def run(self):  # Polemos: hackish bugfix (happens for queue to return nothing)
@@ -181,22 +253,28 @@ class Threaded(threading.Thread, HelperMixin):
         unfreeze = 0
         while p.poll() is None:
             unfreeze += 1
-            if unfreeze == 500: break  # 5 sec breaker
+            if unfreeze == 500:
+                break  # 5 sec breaker
             if not self.msg.empty():
                 msg = self.msg.get()
-                if msg == 'STOP':
+                if msg == "STOP":
                     p.terminate()
                     return
             time.sleep(0.01)
 
-        for line in iter(p.stdout.readline,''): self.out += line.strip() + '\n'
-        for line in iter(p.stderr.readline,''): self.err += line.strip() + '\n'
-        if self.callback: self.callback()
+        for line in iter(p.stdout.readline, ""):
+            self.out += line.strip() + "\n"
+        for line in iter(p.stderr.readline, ""):
+            self.err += line.strip() + "\n"
+        if self.callback:
+            self.callback()
+
 
 def getDataDir():  # Polemos fix
-    data_files_dir = os.path.join(conf.settings['mwDir'], 'Data Files')
+    data_files_dir = os.path.join(conf.settings["mwDir"], "Data Files")
     return data_files_dir
 
+
 def getLocation():  # Polemos: Returns path only if TES3cmd is in "Data Files" dir
-    path = os.path.join(conf.settings['mwDir'], 'Data Files', 'tes3cmd.exe')
+    path = os.path.join(conf.settings["mwDir"], "Data Files", "tes3cmd.exe")
     return path if os.path.exists(path) else None

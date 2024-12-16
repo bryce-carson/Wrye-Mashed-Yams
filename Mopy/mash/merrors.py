@@ -41,8 +41,8 @@ import sys, traceback
 
 def excHook(_tp, _vl, _tb):
     """More user friendly."""
-    excMsg = ''.join(traceback.format_exception(_tp, _vl, _tb))
-    print excMsg
+    excMsg = "".join(traceback.format_exception(_tp, _vl, _tb))
+    print(excMsg)
 
 
 sys.excepthook = excHook
@@ -63,28 +63,28 @@ class mError(Exception):
 class AbstractError(mError):
     """Coding Error: Abstract code section called."""
 
-    def __init__(self, message=_(u'Abstract section called.')):
+    def __init__(self, message=_("Abstract section called.")):
         mError.__init__(self, message)
 
 
 class ArgumentError(mError):
     """Coding Error: Argument out of allowed range of values."""
 
-    def __init__(self, message=_(u'Argument is out of allowed ranged of values.')):
+    def __init__(self, message=_("Argument is out of allowed ranged of values.")):
         mError.__init__(self, message)
 
 
 class StateError(mError):
     """Error: Object is corrupted."""
 
-    def __init__(self, message=_(u'Object is in a bad state.')):
+    def __init__(self, message=_("Object is in a bad state.")):
         mError.__init__(self, message)
 
 
 class UncodedError(mError):
     """Coding Error: Call to section of code that hasn't been written."""
 
-    def __init__(self, message=_(u'Section is not coded yet.')):
+    def __init__(self, message=_("Section is not coded yet.")):
         mError.__init__(self, message)
 
 
@@ -104,7 +104,7 @@ class Tes3Error(mError):
         self.inName = inName
 
     def __str__(self):
-        return u'%s -> %s' % (self.inName or _(u'Unknown File'), self.message)
+        return "%s -> %s" % (self.inName or _("Unknown File"), self.message)
 
 
 class Tes3ReadError(Tes3Error):
@@ -114,22 +114,36 @@ class Tes3ReadError(Tes3Error):
         self.recType = recType
         self.tryPos = tryPos
         self.maxPos = maxPos
-        if tryPos < 0: message = (_(u'%s: Attempted to read before (%d) beginning of file/buffer.') % (recType, tryPos))
-        else: message = (_(u'%s: Attempted to read past (%d) end (%d) of file/buffer.') % (recType, tryPos, maxPos))
+        if tryPos < 0:
+            message = _(
+                "%s: Attempted to read before (%d) beginning of file/buffer."
+            ) % (recType, tryPos)
+        else:
+            message = _("%s: Attempted to read past (%d) end (%d) of file/buffer.") % (
+                recType,
+                tryPos,
+                maxPos,
+            )
         Tes3Error.__init__(self, inName, message)
 
 
 class Tes3RefError(Tes3Error):
     """TES3 Error: Reference is corrupted."""
 
-    def __init__(self, inName, cellId, objId, iObj, iMod, masterName=''):
+    def __init__(self, inName, cellId, objId, iObj, iMod, masterName=""):
         self.cellId = cellId
         self.iMod = iMod
         self.iObj = iObj
         self.objId = objId
         self.masterName = masterName
-        message = (_(u'%s: Bad Ref: %s: objId: %s iObj: %d') % (inName, cellId, objId, iObj))
-        if iMod: message += u' iMod: %d [%s]' % (iMod, masterName)
+        message = _("%s: Bad Ref: %s: objId: %s iObj: %d") % (
+            inName,
+            cellId,
+            objId,
+            iObj,
+        )
+        if iMod:
+            message += " iMod: %d [%s]" % (iMod, masterName)
         Tes3Error.__init__(self, inName, message)
 
 
@@ -141,31 +155,36 @@ class Tes3SizeError(Tes3Error):
         self.readSize = readSize
         self.maxSize = maxSize
         self.exactSize = exactSize
-        if exactSize: messageForm = _(u'%s: Expected size == %d, but got: %d ')
-        else: messageForm = _(u'%s: Expected size <= %d, but got: %d ')
+        if exactSize:
+            messageForm = _("%s: Expected size == %d, but got: %d ")
+        else:
+            messageForm = _("%s: Expected size <= %d, but got: %d ")
         Tes3Error.__init__(self, inName, messageForm % (recName, readSize, maxSize))
 
 
 class Tes3UnknownSubRecord(Tes3Error):
     """TES3 Error: Unknown subrecord."""
 
-    def __init__(self,inName,subName,recName):
-        Tes3Error.__init__(self, inName, _(u'Extraneous subrecord (%s) in %s record.')
-                           % (subName, recName))
+    def __init__(self, inName, subName, recName):
+        Tes3Error.__init__(
+            self,
+            inName,
+            _("Extraneous subrecord (%s) in %s record.") % (subName, recName),
+        )
 
 
 # Usage Errors
 class MaxLoadedError(mError):
     """Usage Error: Attempt to add a mod to load list when load list is full."""
 
-    def __init__(self, message=_(u'Load list is full.')):
+    def __init__(self, message=_("Load list is full.")):
         mError.__init__(self, message)
 
 
 class SortKeyError(mError):
     """Unknown Error: Unrecognized sort key."""
 
-    def __init__(self, message=_(u'Unrecognized sort key.')):
+    def __init__(self, message=_("Unrecognized sort key.")):
         mError.__init__(self, message)
 
 
@@ -173,11 +192,15 @@ class SortKeyError(mError):
 class MashError(mError):
     """Mash Error: Unrecognized sort key."""
 
-    def __init__(self, col=u'', message=_(u'Unrecognized sort key')):
-        if col is None: col=u''
-        mError.__init__(self, u'%s%s%s' % (message, u': ' if col or col is None else u'.', col))
+    def __init__(self, col="", message=_("Unrecognized sort key")):
+        if col is None:
+            col = ""
+        mError.__init__(
+            self, "%s%s%s" % (message, ": " if col or col is None else ".", col)
+        )
 
 
 class InterfaceError(mError):
     """Interface Error."""
+
     pass

@@ -270,7 +270,9 @@ def Remove(file): # Polemos
     try: os.remove(file)
     except:
         try: os.chmod(file, stat.S_IWRITE)  # Part pythonic,
-        except: check_call(ur'attrib -R %s /S' % (file))  # part hackish.
+        # Old Python 2 code.
+        # except: check_call(ur'attrib -R %s /S' % (file))  # part hackish.
+        except: check_call(f'attrib -R {file} /S')
         try: os.remove(file)
         except: return False
     return True
@@ -5393,7 +5395,7 @@ class MashApp(wx.App):  # Polemos: Added settings, file check, updates check, ml
             for fileName in colGenre.keys():
                 colGroup[fileName] = colGenre[fileName]
                 del colGenre[fileName]
-                print fileName
+                print(fileName)
             if conf.settings['mash.mods.sort'] == 'Genre': conf.settings['mash.mods.sort'] = 'Group'
             colWidths = conf.settings['mash.mods.colWidths']
             if 'Genre' in colWidths:
@@ -11167,4 +11169,5 @@ def InitLinks_no_col_menu(): # Polemos: For "Menubar".
     InitUtilsLinks_items()
 
 # Main ------------------------------------------------------------------------ #
-if __name__ == '__main__': print 'Compiled'
+if __name__ == '__main__':
+    print('Compiled')

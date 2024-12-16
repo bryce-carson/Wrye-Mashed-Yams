@@ -47,15 +47,18 @@ maxLogEntries = 20  # Polemos: Max number of sessions stored in the log.
 def logChk():
     """Check and limit log size."""
     try:
-        os.chmod('WryeMash.log', S_IWUSR|S_IREAD)
-        with io.open('WryeMash.log', 'r') as fl:
+        os.chmod("WryeMash.log", S_IWUSR | S_IREAD)
+        with io.open("WryeMash.log", "r") as fl:
             rawLog = fl.readlines()
-            index = [n for n, x in enumerate(rawLog) if '=== Wrye Mash started. ===' in x]
+            index = [
+                n for n, x in enumerate(rawLog) if "=== Wrye Mash started. ===" in x
+            ]
         if len(index) >= maxLogEntries:
-            with io.open('WryeMash.log', 'w') as fl:
+            with io.open("WryeMash.log", "w") as fl:
                 index.reverse()
-                fl.write(''.join(rawLog[index[maxLogEntries-1]:]))
-    except: pass  # Unable to access the log file. C'est La Vie.
+                fl.write("".join(rawLog[index[maxLogEntries - 1] :]))
+    except:
+        pass  # Unable to access the log file. C'est La Vie.
 
 
 class ErrorLogger:
@@ -69,18 +72,26 @@ class ErrorLogger:
 
     def write(self, message):
         """Write to out-stream."""
-        try: [stream.write(message) for stream in self.outStream]
-        except: pass
+        try:
+            [stream.write(message) for stream in self.outStream]
+        except:
+            pass
 
 
 # Logger start
 logChk()
-fl = file('WryeMash.log', 'a+')
-sys.stdout, sys.stderr = ErrorLogger((fl, sys.__stdout__)), ErrorLogger((fl, sys.__stderr__))
-fl.write('\n%s: # ===================== Wrye Mash started. ===================== #\n' % datetime.now())
+fl = file("WryeMash.log", "a+")
+sys.stdout, sys.stderr = ErrorLogger((fl, sys.__stdout__)), ErrorLogger(
+    (fl, sys.__stderr__)
+)
+fl.write(
+    "\n%s: # ===================== Wrye Mash started. ===================== #\n"
+    % datetime.now()
+)
 
 # Main
 import masher
+
 stdOutCode = int(sys.argv[1]) if len(sys.argv) > 1 else -1
 app = masher.MashApp(stdOutCode) if stdOutCode >= 0 else masher.MashApp()
 app.MainLoop()
