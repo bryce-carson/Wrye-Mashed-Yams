@@ -204,8 +204,10 @@ class check_version: # Polemos
                                             u'\n\nPlease try again later or visit Wrye Mash home page on Nexus.'), title=_(u'Update error'))
 
         elif status:  # On available update
-            result = gui.dialog.askdialog(None, _(u'Wrye Mash v%s has been released.\n\nWould you like to download it?'
-                                                  u' (Will open your internet browser).' % (self.newver)), _(u'Wrye Mash %s released.' % (self.newver)))
+            result = gui.dialog.askdialog(None,
+                                          _(f'Wrye Mash v{self.newver} has been released.\n\nWould you like to download it?'
+                                            f' (Will open your internet browser).'),
+                                          _(f'Wrye Mash {self.newver} released.'))
 
             conf.settings['last.check'] = date.today()
             if result == wx.ID_YES:  # If YES:
@@ -271,7 +273,6 @@ def Remove(file): # Polemos
     except:
         try: os.chmod(file, stat.S_IWRITE)  # Part pythonic,
         # Old Python 2 code.
-        # except: check_call(ur'attrib -R %s /S' % (file))  # part hackish.
         except: check_call(f'attrib -R {file} /S')
         try: os.remove(file)
         except: return False
@@ -287,9 +288,9 @@ class Checkboxes(balt.ImageList):
         balt.ImageList.__init__(self,16,16)
         for status in ('on','off'):
             for color in ('purple','blue','green','orange','yellow','red','white'):
-                shortKey = '%s.%s' % (color, status)
-                imageKey = 'checkbox.%s' % shortKey
-                file = os.path.join(imgPath, r'checkbox_%s_%s.png' % (color, status))
+                shortKey = '{color}.{status}'
+                imageKey = f'checkbox.{shortKey}'
+                file = os.path.join(imgPath, f'checkbox_{color}_{status}.png')
                 image = singletons.images[imageKey] = Image(file, wx.BITMAP_TYPE_PNG)
                 self.Add(image,shortKey)
 
@@ -607,11 +608,9 @@ class BSArchivesList(gui.List, gui.ListDragDropMixin):  # Polemos
     def set_status(self):  # Polemos fix for Mods tab.
         """GUI toolbar status."""
         if not self.openmw:  # Polemos: Regular Morrowind support
-            text = _(u' Mods: %d/%d | BSAs: %d/%d') % (
-                len(mosh.mwIniFile.loadFiles), len(mosh.modInfos.data), self.active_bsa, len(self.items))
+            text = _(f' Mods: {len(mosh.mwIniFile.loadFiles):d}/{len(mosh.modInfos.data):d} | BSAs: {self.active_bsa:d}/{len(self.items):d}')
         if self.openmw:  # Polemos: OpenMW/TES3mp support
-            text = _(u' Plugins: %d/%d | BSAs: %d/%d') % (
-                len(mosh.mwIniFile.loadFiles), len(mosh.modInfos.data), self.active_bsa, len(self.items))
+            text = _(f' Plugins: {len(mosh.mwIniFile.loadFiles):d}/{len(mosh.modInfos.data):d} | BSAs: {self.active_bsa:d}/{len(self.items):d}')
         singletons.statusBar.SetStatusField(text, 2)
 
     def bsa_active_count(self):
@@ -1113,7 +1112,7 @@ class MasterList(gui.List):
             if col == 'Master':
                 value = masterName
             elif col == '#' or col == 'Load Order':
-                value = `self.allMasters.index(masterName)+1`
+                value = f'{ self.allMasters.index(masterName)+1 }'
             #--Insert/Set Value
             if mode and (colDex == 0): self.list.InsertStringItem(itemDex, value)
             else: self.list.SetStringItem(itemDex, colDex, value)
@@ -1342,7 +1341,7 @@ class MasterList(gui.List):
             if not masterInfo.modInfo or not masterInfo.isLoaded: modMap[oldMod] = -1  #--Delete
             else:
                 masterName = masterInfo.name
-                if masterName not in self.newMasters: raise mosh.MoshError, _(u"Missing master: %s" % masterName)
+                if masterName not in self.newMasters: raise (mosh.MoshError, _(f"Missing master: {masterName}"))
                 newMod = self.newMasters.index(masterName) + 1
                 if newMod != oldMod: modMap[oldMod] = newMod
                 #--Object map?
@@ -7398,7 +7397,7 @@ class Installer_Move(InstallerLink):
         """Handle selection."""
         curPos = min(self.data[x].order for x in self.selected)
         message = _(u'Move selected archives to what position?\nEnter position number.\nLast: -1; First of Last: -2; Semi-Last: -3.')
-        newPos = balt.askText(self.gTank, message, self.title, `curPos`)
+        newPos = balt.askText(self.gTank, message, self.title, f'{curPos}')
         if not newPos: return
         newPos = newPos.strip()
         if not re.match('^-?\d+$', newPos):
@@ -9484,7 +9483,7 @@ class Mod_RenumberRefs(Link):
                 return
             table = self.window.data.table
             first = table.getItem(fileName,'firstObjectIndex',random.randint(1001,10001))
-            dialog = wx.TextEntryDialog(self.window, _(u"Enter first objectIndex. [Current value: %d]") % (curFirst,), _(u'First Object Index'), `first`)
+            dialog = wx.TextEntryDialog(self.window, _(u"Enter first objectIndex. [Current value: %d]") % (curFirst,), _(u'First Object Index'), f'{first}')
             if dialog.ShowModal() != wx.ID_OK: return
             first = int(dialog.GetValue())
             if not (0 < first <= 100000):
@@ -10443,7 +10442,7 @@ class Screen_Rename(Link):
                 newPath = screensDir.join(newName)
                 if not newPath.exists(): oldPath.moveTo(newPath)
             num += 1
-            numStr = `num`
+            numStr = f'{num}'
             numStr = '0'*(numLen-len(numStr))+numStr
         mosh.screensData.refresh()
         self.window.RefreshUI()
