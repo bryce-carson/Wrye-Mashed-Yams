@@ -1,0 +1,53 @@
+* Python 3
+** TODO Dependencies
+What are the dependencies of Wrye Mash Mopy?
+
+** TODO Distribution
+How should the application be packaged and distributed to the benefit of users?
+
+** TODO Graphical User Interface
+*** =BaseHTTPServer=
+#+begin_src python
+  import BaseHTTPServer
+
+  class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
+      def do_GET(self):
+          self.send_response(200)
+          self.send_header("Content-type", "text/html")
+          self.end_headers()
+          self.wfile.write("Hello world!")
+
+  server_address = ('', 8080)
+  httpd = BaseHTTPServer.HTTPServer(server_address, Handler)
+  httpd.serve_forever()
+#+end_src
+
+#+RESULTS:
+
+*** Plotly Dash application
+- Kill wx, py2exe, etc.
+- Retain logging to a file and window
+** Ideas; do not take action until TODOs are DONE.
+*** Extensions
+Python is a good language for scripting, but it is a strange language to extend
+other applications with. Lua should be used for extensions, given the Morrowind
+community has nestled into bed with Lua in MWSE and OpenMW; there's no sense
+fighting that momentum with something like Guile Scheme or any other extension
+language.
+
+* Software development methodology
+** Test-driven development
+If testing drives development then tests are written prior to other behaviours.
+However, given that the application already exists and its specification is the
+implementation used, how could TDD be applied?
+
+** Behaviour-driven development
+
+* Pylint provides [[https://pylint.readthedocs.io/en/latest/additional_tools/pyreverse/index.html][=pyreverse=]], a tool to generate diagrams from code
+* Experimental Xbox ESS support
+- Saves in an Xbox folder structure should be supported, so a save folder
+  transferred from your Xbox into your Morrowind saves can be inspected and
+  repaired (such as resetting actors) before transferring back to the Xbox.
+- Saves in the Xbox ESS format (e.g. "1.2", for a vanilla Morrowind.esm-only
+  dependency, followed by 0x30) should be supported.
+

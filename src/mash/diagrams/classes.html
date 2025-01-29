@@ -1,0 +1,562 @@
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      <div class="mermaid">
+    
+        classDiagram
+          class BSAPack {
+          }
+          class Book {
+            enchant : NoneType
+            enchantPoints : int
+            icon : NoneType
+            id
+            isDeleted : bool
+            isScroll : int
+            model : str
+            script : NoneType
+            teaches : int
+            text : NoneType
+            title : NoneType
+            value : int
+            weight : int
+            dumpData(out)
+            loadData(ins)
+          }
+          class Cell {
+            cellName
+            endRecords : list
+            flags
+            gridX
+            gridY
+            objects : list
+            records : list
+            skipObjRecords : bool
+            tempObjects : list
+            cmpId(other)
+            dumpData(out)
+            getId()
+            getObjects()
+            loadData(ins)
+          }
+          class Cell_Acdt {
+          }
+          class Cell_Chrd {
+          }
+          class Cell_Frmr {
+            name : str
+          }
+          class Cell_Objects {
+            cell
+            isTemp(object)
+            list()
+            remove(object)
+            replace(object, newObject)
+          }
+          class Cntc {
+            id : NoneType
+            index : int
+            loadData(ins)
+          }
+          class ContentRecord {
+            getId()
+          }
+          class Crec {
+            id : NoneType
+            index : int
+            loadData(ins)
+          }
+          class Dial {
+            data : NoneType
+            dele : NoneType
+            id : NoneType
+            infos : list
+            type : int
+            unknown1 : NoneType
+            loadData(ins)
+            sortInfos()
+          }
+          class FileDials {
+            dials : list
+            infos : dict
+            tes3
+            dumpText(textFileName, groupBy, spId)
+            load(factory)
+            loadText(textFileName)
+            save(outPath)
+          }
+          class FileInfo {
+            ctime
+            dir
+            extras : dict
+            madeBackup : bool
+            masterNames : tuple
+            masterOrder : tuple
+            masterSizes : dict
+            mtime
+            name
+            openMW
+            size : int
+            stats : dict
+            tes3 : int
+            getHeader()
+            getMasterStatus(masterName)
+            getNextSnapshot()
+            getStats()
+            getStatus()
+            isEsm()
+            isEsp()
+            isEss()
+            isMod()
+            isOmwaddon()
+            isOmwgame()
+            isOmwsave()
+            makeBackup(forceBackup)
+            refresh()
+            sameAs(fileInfo)
+            setMTime(mtime)
+            setType(type)
+            writeAuthor(author)
+            writeAuthorWM()
+            writeDescription(description)
+            writeHedr()
+            writeNew(masters, mtime)
+          }
+          class FileInfos {
+            OpenMW
+            corrupted : dict
+            data : dict
+            dir
+            factory
+            table
+            copy(fileName, destDir, destName, setMTime)
+            delete(fileName)
+            get(key, default)
+            has_key(key)
+            keys()
+            move(fileName, destDir)
+            moveIsSafe(fileName, destDir)
+            refresh()
+            refreshFile(fileName)
+            refresh_Morrowind()
+            refresh_OpenMW()
+            rename(oldName, newName)
+            rightFileType(fileName)
+          }
+          class FileLists {
+            levcs : dict
+            levis : dict
+            records
+            srcMods : dict
+            tes3
+            beginMerge()
+            completeMerge()
+            load()
+            mergeWith(newFL)
+          }
+          class FileRefs {
+            cells : list
+            cells_id : dict
+            conts : list
+            conts_id : dict
+            debrisIds : dict
+            fileSize
+            fmap : NoneType
+            isDamaged : bool
+            isLoaded : bool
+            lands : dict
+            records : list
+            refs_scpt : dict
+            scptRefs : set
+            skipObjRecords : bool
+            tes3 : NoneType
+            getFirstObjectIndex()
+            getObjectMap(oldRefs)
+            listBadRefScripts()
+            load()
+            refresh()
+            refreshSize()
+            remap(newMasters, modMap, objMaps)
+            remapObject(object, newIMod, newIObj)
+            removeLvcrs()
+            removeOrphanContents()
+            removeRefsById(objIds, safeCells)
+            renumberObjects(first)
+            replaceRefsById(refReplacer)
+            save(outPath)
+            setDebrisIds()
+            updateScptRefs()
+          }
+          class FileRep {
+            canSave : bool
+            fileInfo
+            indexed : dict
+            log
+            progress
+            records : list
+            tes3 : NoneType
+            getRecord(type, id, Class)
+            indexRecords(indexTypes)
+            load(keepTypes, factory)
+            loadUI(factory)
+            safeSave()
+            save(outPath)
+            setRecord(record)
+            sortRecords()
+            unpackRecords(unpackTypes)
+          }
+          class FileScripts {
+            scripts : list
+            tes3
+            dumpText(textFileName)
+            load(factory)
+            loadText(textFileName)
+            save(outPath)
+          }
+          class Fmap {
+            BORDER
+            DEEP
+            GRID
+            LAND
+            MARKED
+            SHALLOW
+            mapd : NoneType, list
+            drawBorder(color, x1, y1, x2, y2, thick)
+            drawCell(land, uland, vland, marked)
+            drawGrid(gridLines)
+            drawRect(color, x1, y1, x2, y2)
+            dumpData(out)
+            edit()
+          }
+          class Glob {
+            id
+            isDeleted : bool
+            type : str
+            value : int
+            dumpData(out)
+            loadData(ins)
+          }
+          class Info {
+            cell : NoneType
+            id : str
+            isDeleted : bool
+            nextId : str
+            pcFaction : NoneType
+            pcRank : int
+            prevId : str
+            qflag : int
+            script : NoneType
+            spClass : NoneType
+            spDisp : int
+            spFaction : NoneType
+            spId : NoneType
+            spRace : NoneType
+            spRank : int
+            spSex : int
+            speak : NoneType
+            tests : list
+            text : NoneType
+            type : int
+            unk02 : int
+            compactTests(mode)
+            dumpData(out)
+            loadData(ins)
+          }
+          class InfoS {
+            id : NoneType
+            nextId : NoneType
+            prevId : NoneType
+            records : list
+            spId : NoneType
+            text : NoneType
+            dumpData(out)
+            loadData(ins)
+          }
+          class Info_Test {
+            func
+            oper
+            text : str
+            type
+            value : int
+            dumpData(out, index)
+          }
+          class Land {
+            gridX
+            gridY
+            heights : NoneType, array
+            id : NoneType
+            getHeights()
+            getId()
+          }
+          class Levc {
+          }
+          class Levi {
+          }
+          class ListRecord {
+            calcForEachItem : bool
+            calcFromAllLevels : bool
+            chanceNone : int
+            count : int
+            data : NoneType
+            entries : list
+            id : NoneType
+            isDeleted : bool
+            dumpData(out)
+            loadData(ins)
+            mergeWith(newLevl)
+          }
+          class ModInfo {
+            isExOverLoaded()
+            isWellOrdered()
+            setMTime(mtime)
+          }
+          class ModInfos {
+            OpenMW
+            doubleTime : dict
+            mtimes
+            mtimesReset : list
+            objectMaps : NoneType, dict
+            resetMTimes
+            addObjectMap(fromMod, toMod, objectMap)
+            circularMasters(stack, masters)
+            delete(fileName)
+            getLoadOrder(modNames, asTuple)
+            getObjectMap(fromMod, toMod)
+            getObjectMaps(toMod)
+            getResourceReplacers()
+            getVersion(fileName)
+            isLoaded(fileName)
+            load(fileNames, doSave)
+            loadObjectMaps()
+            move(fileName, destDir)
+            refresh()
+            refreshDoubleTime()
+            refreshFile(fileName)
+            refreshMTimes()
+            removeObjectMap(fromMod, toMod)
+            rename(oldName, newName)
+            rightFileType(fileName)
+            saveObjectMaps()
+            unload(fileNames, doSave)
+          }
+          class Npcc {
+            id : NoneType
+            index : int
+            loadData(ins)
+          }
+          class Record {
+            changed : bool
+            data : NoneType
+            delFlag
+            id : NoneType
+            inName : NoneType
+            name
+            recFlag
+            size
+            dump(out)
+            dumpData(out)
+            getId()
+            getReader()
+            getSize()
+            load(ins, unpack)
+            loadData(ins)
+            setChanged(value)
+            setData(data)
+          }
+          class RefReplacer {
+            newIds : dict
+            newIndex : dict
+            srcDepends : dict
+            srcModName : NoneType
+            usedIds : set
+            clearUsage()
+            getNewId(oldId)
+            getSrcRecords()
+            loadText(filePath)
+          }
+          class ReplJournalDate {
+            prevDate : NoneType
+          }
+          class ResPack {
+            duplicate(newName)
+            getOrder()
+            isSelected()
+            rename(newName)
+            select()
+            unselect()
+          }
+          class ResPacks {
+            data : dict
+            refresh()
+          }
+          class ResReplacerPack {
+          }
+          class ResourceReplacer {
+            cumSize : int
+            dirExts : dict
+            file
+            progress : NoneType
+            replacerDir
+            textureExts : set
+            totSize : int
+            apply(progress)
+            applyDir(srcDir, destDir, exts)
+            doRoot(action)
+            isApplied()
+            remove()
+            removeDir(srcDir, destDir, exts)
+            sizeDir(srcDir, destDir, exts)
+          }
+          class SaveInfo {
+            tes3
+            getJournal()
+            getScreenshot()
+            getStatus()
+          }
+          class SaveInfos {
+            rightFileType(fileName)
+          }
+          class Scpt {
+            dataSize : int
+            id : NoneType
+            numFloats : int
+            numLongs : int
+            numShorts : int
+            rnam : NoneType
+            scdt : NoneType
+            sctx : NoneType
+            scvr : NoneType
+            slcs : NoneType
+            slfd : NoneType
+            slld : NoneType
+            slsd : NoneType
+            subRecordNames : list
+            varSize : int
+            dumpData(out)
+            getRef()
+            loadData(ins)
+            setCode(code)
+            setRef(reference)
+          }
+          class SubRecord {
+            changed : bool
+            data : NoneType
+            inName : NoneType
+            name
+            size
+            dump(out)
+            dumpData(out)
+            getSize()
+            load(ins, unpack)
+            setChanged(value)
+            setData(data)
+          }
+          class Tes3 {
+            changed : int
+            data : NoneType
+            gmdt : NoneType
+            hedr : NoneType
+            masters : list
+            others : NoneType, list
+            dumpData(out)
+            loadData(ins)
+          }
+          class Tes3Reader {
+            inName
+            ins
+            size
+            atEnd()
+            close()
+            findSubRecord(subName, recType)
+            read(size, recType)
+            seek(offset, whence, recType)
+            tell()
+            unpack(format, size, recType)
+            unpackRecHeader()
+            unpackSubHeader(recType, expName, expSize)
+          }
+          class Tes3Writer {
+            out
+            close()
+            getvalue()
+            pack(format)
+            packSub(type, data)
+            packSub0(type, data)
+            write(data)
+          }
+          class Tes3_Gmdt {
+            curCell
+            curHealth
+            data
+            day
+            maxHealth
+            playerName
+            size
+            unknown1
+            unknown2
+            getSize()
+            load(ins, unpack)
+          }
+          class Tes3_Hedr {
+            author : str
+            changed : int
+            data
+            description : str
+            fileType : int
+            numRecords : int
+            size
+            version : float
+            getSize()
+            load(ins, unpack)
+          }
+          class WorldRefs {
+            cellRefAlts : dict
+            cellRefIds : dict
+            debrisIds : dict
+            extCellNames : set
+            lands : dict
+            levListMasters : dict
+            log
+            masterNames : list
+            progress
+            addMaster(masterName)
+            addMasters(masterNames)
+            getMasterMap(masterInfo)
+            removeDebrisCells(fileRefs)
+            removeDebrisRecords(fileRefs)
+            removeOverLists(fileRefs)
+            repair(fileRefs)
+            repairWorldMap(fileRefs, gridLines)
+            repairWorldMapMCP(fileRefs, gridLines)
+          }
+          BSAPack --|> ResPack
+          ContentRecord --|> Record
+          FileDials --|> FileRep
+          FileLists --|> FileRep
+          FileRefs --|> FileRep
+          FileScripts --|> FileRep
+          ListRecord --|> Record
+          ModInfo --|> FileInfo
+          ModInfos --|> FileInfos
+          ResReplacerPack --|> ResPack
+          SaveInfo --|> FileInfo
+          SaveInfos --|> FileInfos
+          Tes3 --|> Record
+          SubRecord --* Scpt : scdt
+          SubRecord --* Scpt : sctx
+          Tes3 --* FileDials : tes3
+          Tes3 --* FileInfo : tes3
+          Tes3 --* FileLists : tes3
+          Tes3 --* FileRefs : tes3
+          Tes3 --* FileRep : tes3
+          Tes3 --* FileScripts : tes3
+          Tes3 --* SaveInfo : tes3
+          Tes3_Gmdt --* Tes3 : gmdt
+          Tes3_Hedr --* Tes3 : hedr
+          Tes3_Hedr --* Tes3 : hedr
+          FileInfo --o FileInfos : factory
+          Fmap --o FileRefs : fmap
+  
+       </div>
+  </body>
+</html>

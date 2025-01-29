@@ -1,0 +1,2180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2025-01-01 Wed 15:34 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Format of Morrowind's ESM Plug-In File</title>
+<meta name="author" content="Dave Humphrey - uesp@sympatico.ca Bryce Carson - bryce.a.carson@gmail.com" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Format of Morrowind's ESM Plug-In File</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1127f89">1. ESₓ files are a record-based format:</a>
+<ul>
+<li><a href="#orgb8863a3">1.1. Records</a>
+<ul>
+<li><a href="#org9f8a297">1.1.1. Header (16 bytes)</a></li>
+<li><a href="#orgc4224ef">1.1.2. Data (n bytes)</a></li>
+<li><a href="#orgcebe9ef">1.1.3. Reading records serially</a></li>
+</ul>
+</li>
+<li><a href="#orga49914e">1.2. Subrecords</a></li>
+</ul>
+</li>
+<li><a href="#org32a1205">2. Morrowind.esm file statistics</a></li>
+<li><a href="#org9eef980">3. TES3 (1 count)</a></li>
+<li><a href="#org03a43b4">4. GMST =  1428 counts</a></li>
+<li><a href="#org51c3f40">5. GLOB =    73 counts</a></li>
+<li><a href="#orgde862be">6. CLAS =    77 counts</a></li>
+<li><a href="#org3f3c282">7. FACT =    22 (   286,    983.64,   1218)</a></li>
+<li><a href="#orgb2ec64e">8. RACE =    10 (   693,    751.50,    881)</a></li>
+<li><a href="#orgf1f510d">9. SOUN =   430 (    44,     60.52,     80)</a></li>
+<li><a href="#org8f55d55">10. SKIL =    27 (   144,    247.44,    330)</a></li>
+<li><a href="#org046acdd">11. MGEF =   137 (   113,    432.65,    665)</a></li>
+<li><a href="#orgbca7941">12. SCPT =   631 (   100,   1248.95,   9966)</a></li>
+<li><a href="#org6582ab4">13. REGN =     9 (   313,    682.44,   1219)</a></li>
+<li><a href="#org5eebb69">14. BSGN =    13 (   158,    199.23,    272)</a></li>
+<li><a href="#org5f32c09">15. LTEX =   107 (    48,     62.84,     76)</a></li>
+<li><a href="#org1b0dc4d">16. STAT =  2788 (    39,     59.74,     79)</a></li>
+<li><a href="#org08e32d2">17. DOOR =   140 (    47,    134.68,    185)</a></li>
+<li><a href="#orgdee1b8f">18. MISC =   536 (    99,    134.01,    176)</a></li>
+<li><a href="#orgb36a5ef">19. WEAP =   485 (    90,    162.62,    222)</a></li>
+<li><a href="#org6f89e21">20. CONT =   890 (    80,    284.19,  10371)</a></li>
+<li><a href="#orgd85baa9">21. SPEL =   982 (    76,    109.80,    345)</a></li>
+<li><a href="#org8a102e6">22. CREA =   260 (   213,    412.08,    780)</a></li>
+<li><a href="#org2645273">23. BODY =  1125 (    75,     92.73,    103)</a></li>
+<li><a href="#orgba648b3">24. LIGH =   574 (    55,    105.77,    197)</a></li>
+<li><a href="#org36f4a69">25. ENCH =   708 (    57,     98.59,    311)</a></li>
+<li><a href="#org71d07a6">26. NPC_ =  2675 (   233,    619.12,   6236)</a></li>
+<li><a href="#org7c5dec9">27. ARMO =   280 (   155,    217.10,    346)</a></li>
+<li><a href="#orgc90f439">28. CLOT =   510 (   123,    203.98,    658)</a></li>
+<li><a href="#orged9488a">29. REPA =     6 (   124,    145.67,    158)</a></li>
+<li><a href="#orgaf7bf71">30. ACTI =   697 (    52,     93.60,    138)</a></li>
+<li><a href="#org6347e42">31. APPA =    22 (   139,    152.59,    167)</a></li>
+<li><a href="#org1874530">32. LOCK =     6 (   126,    136.17,    145)</a></li>
+<li><a href="#orgd3fa12e">33. PROB =     6 (   124,    136.33,    145)</a></li>
+<li><a href="#orga969a62">34. INGR =    95 (   151,    181.66,    227)</a></li>
+<li><a href="#orge63999a">35. BOOK =   574 (   131,   3306.91,  42120)</a></li>
+<li><a href="#orge49aa8c">36. ALCH =   258 (   163,    188.15,    334)</a></li>
+<li><a href="#orged445c4">37. LEVI =   227 (    80,    486.23,   9201)</a></li>
+<li><a href="#org79b067e">38. LEVC =   116 (    97,    326.54,   1105)</a></li>
+<li><a href="#org952d993">39. CELL =  2538 (    29,  10151.12, 104488)</a>
+<ul>
+<li><a href="#org2e8e495">39.1. Cell Definitions</a></li>
+<li><a href="#orgc8713ab">39.2. Exterior Cell Sub-Records</a></li>
+<li><a href="#org376a632">39.3. Interior Cell Sub-Records</a></li>
+<li><a href="#org0530518">39.4. Referenced Object Data Grouping</a></li>
+</ul>
+</li>
+<li><a href="#org38d6d1e">40. LAND =  1390 (    28,  27374.14,  30243)</a></li>
+<li><a href="#org4cd2a16">41. PGRD =  1194 (   101,    996.60,   8261)</a></li>
+<li><a href="#org0d02596">42. SNDG =   168 (    50,     75.86,     94)</a></li>
+<li><a href="#orgd246de1">43. Dialogue and Information record pairs</a>
+<ul>
+<li><a href="#orgcacc981">43.1. DIAL =   772 (    24,     33.54,     54)</a></li>
+<li><a href="#orgb148be0">43.2. INFO =  3408 (   107,    299.86,   1063)</a></li>
+</ul>
+</li>
+<li><a href="#org104ec8d">44. ESS Save Game Format Differences</a></li>
+<li><a href="#orgcb9384d">45. Conversion from a biped to a bodypart types</a></li>
+<li><a href="#orgc66f797">46. INFO Function Codes (2-byte character string)</a></li>
+<li><a href="#org65a6572">47. Skill Action/Use</a></li>
+<li><a href="#orgb7fc615">48. SCDT Compiled script data</a></li>
+<li><a href="#orga979e53">49. Variables</a></li>
+<li><a href="#org8bbe624">50. Mnemonics</a></li>
+<li><a href="#org94be645">51. Definitions</a></li>
+</ul>
+</div>
+</div>
+<p>
+Provided as-is May 10th 2003 by Dave Humphrey.
+</p>
+
+<p>
+Reformatted by Bryce Carson 2024-12-31.
+</p>
+<div id="outline-container-org1127f89" class="outline-2">
+<h2 id="org1127f89"><span class="section-number-2">1.</span> ESₓ files are a record-based format:</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The ESM/ESP/ESS files (collectively ESₓ) are composed entirely of records with
+the following format:
+</p>
+</div>
+<div id="outline-container-orgb8863a3" class="outline-3">
+<h3 id="orgb8863a3"><span class="section-number-3">1.1.</span> Records</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+The number of data bytes \(n\) is determined by the record type, which is named in
+the header Name, a string of characters not null-terminated.
+</p>
+</div>
+<div id="outline-container-org9f8a297" class="outline-4">
+<h4 id="org9f8a297"><span class="section-number-4">1.1.1.</span> Header (16 bytes)</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<dl class="org-dl">
+<dt>4 bytes char Name[4]</dt><dd>4-byte record name string (not null-terminated)</dd>
+<dt>4 bytes long Size</dt><dd>Size of the record not including the 16 bytes of header data.</dd>
+<dt>4 bytes long Flag12</dt><dd>Deleted or Ignored record flag
+Unknown value, usually 0 (deleted/ignored flag?).</dd>
+<dt>4 bytes long Flag34</dt><dd>Blocked or Persistent record flag
+0x00002000 = Blocked
+0x00000400 = Persistant</dd>
+</dl>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #b0d6f5;">"=4s3l"</span>
+</pre>
+</div>
+
+<p>
+This means a string of four characters, then three longs.
+</p>
+</div>
+</div>
+<div id="outline-container-orgc4224ef" class="outline-4">
+<h4 id="orgc4224ef"><span class="section-number-4">1.1.2.</span> Data (n bytes)</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+All records are composed of a variable number of sub-records. There is no
+sub-record count, just use the record Size value to determine when to stop
+reading a record.
+</p>
+
+<p>
+See the subrecord heading to read about the format string used to unpack the
+binary data in subrecords according to their subrecord type.
+</p>
+</div>
+</div>
+<div id="outline-container-orgcebe9ef" class="outline-4">
+<h4 id="orgcebe9ef"><span class="section-number-4">1.1.3.</span> Reading records serially</h4>
+<div class="outline-text-4" id="text-1-1-3">
+<ol class="org-ol">
+<li>Read a record header, while the end of the file has not been reached.</li>
+<li>For a given record size, taken from the record header, store the data for the
+record until the next record is reached.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orga49914e" class="outline-3">
+<h3 id="orga49914e"><span class="section-number-3">1.2.</span> Subrecords</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+All records, as shown above, are again composed entirely of a variable number of
+sub-records with a similar format, as given below:
+</p>
+
+<dl class="org-dl">
+<dt>4 bytes char Name[4]</dt><dd>sub-record name string (not null-terminated)</dd>
+<dt>4 bytes long Size</dt><dd>Size of the sub-record not including the 8 bytes of header data.</dd>
+<dt>n bytes sub-record data</dt><dd>Format depends on the sub-record type (see below).</dd>
+</dl>
+</div>
+</div>
+</div>
+<div id="outline-container-org32a1205" class="outline-2">
+<h2 id="org32a1205"><span class="section-number-2">2.</span> Morrowind.esm file statistics</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>48228 total base records</li>
+<li>Number of unique main headers = 42</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9eef980" class="outline-2">
+<h2 id="org9eef980"><span class="section-number-2">3.</span> TES3 (1 count)</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Main Header Record, 308 Bytes
+</p>
+
+<dl class="org-dl">
+<dt>HEDR</dt><dd>(300 bytes)
+<ul class="org-ul">
+<li>4 bytes, float Version (1.2)</li>
+<li>4 bytes, long Unknown (1)</li>
+<li>32 Bytes, Company Name string</li>
+<li>256 Bytes, ESM file description?</li>
+<li>4 bytes, long NumRecords (48227)</li>
+</ul></dd>
+<dt>MAST</dt><dd><p>
+string, variable length
+</p>
+
+<p>
+Only found in ESP plugins and specifies a master file that the plugin
+requires. Can occur multiple times. Usually found just after the TES3 record.
+</p></dd>
+<dt>DATA</dt><dd><p>
+8 Bytes long64 MasterSize
+</p>
+
+<p>
+Size of the previous master file in bytes (used for version tracking of plugin).
+The MAST and DATA records are always found together, the DATA following the MAST record
+that it refers to.
+</p></dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org03a43b4" class="outline-2">
+<h2 id="org03a43b4"><span class="section-number-2">4.</span> GMST =  1428 counts</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Game Setting Record, 19 to 261 bytes (43 average)
+</p>
+
+<dl class="org-dl">
+<dt>NAME</dt><dd>Setting ID string</dd>
+<dt>STRV</dt><dd>String value</dd>
+<dt>INTV</dt><dd>Integer value (4 btes)</dd>
+<dt>FLTV</dt><dd>Float value (4 bytes)
+<ul class="org-ul">
+<li>Each GMST has one of STRV, INTV, FLTV for the setting value.</li>
+</ul></dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org51c3f40" class="outline-2">
+<h2 id="org51c3f40"><span class="section-number-2">5.</span> GLOB =    73 counts</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Global Variable, 33 to 51 bytes (44 average)
+NAME = Global ID
+FNAM = Type of global (1 byte)
+        's' = short
+        'l' = long
+        'f' = float
+FLTV = Float data (4 bytes)
+</p>
+</div>
+</div>
+<div id="outline-container-orgde862be" class="outline-2">
+<h2 id="orgde862be"><span class="section-number-2">6.</span> CLAS =    77 counts</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Class Definition, 96 to 352 bytes (185 average)
+NAME = Class ID string
+FNAM = Class name string
+CLDT = Class Data (60 bytes)
+        long AttributeID1
+        long AttributeID2
+        long Specialization?
+                0 = Combat
+                1 = Magic
+                2 = Stealth
+        long MinorID1
+        long MajorID1
+        long MinorID2
+        long MajorID2
+        long MinorID3
+        long MajorID3
+        long MinorID4
+        long MajorID4
+        long MinorID5
+        long MajorID5
+        long Flags
+                0x0001 = Playable
+        long AutoCalcFlags
+                0x00001 = Weapon
+                0x00002 = Armor
+                0x00004 = Clothing
+                0x00008 = Books
+                0x00010 = Ingrediant
+                0x00020 = Picks
+                0x00040 = Probes
+                0x00080 = Lights
+                0x00100 = Apparatus
+                0x00200 = Repair
+                0x00400 = Misc
+                0x00800 = Spells
+                0x01000 = Magic Items
+                0x02000 = Potions
+                0x04000 = Training
+                0x08000 = Spellmaking
+                0x10000 = Enchanting
+                0x20000 = Repair Item
+DESC = Description string
+</p>
+</div>
+</div>
+<div id="outline-container-org3f3c282" class="outline-2">
+<h2 id="org3f3c282"><span class="section-number-2">7.</span> FACT =    22 (   286,    983.64,   1218)</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Faction Definition, 286 to 1218 bytes (984 average)
+NAME = Faction ID string
+FNAM = Faction name string
+RNAM = Rank Name (32 bytes)
+        Occurs 10 times for each rank in order
+FADT = Faction data (240 bytes)
+        long AttributeID1
+        long AttributeID2
+        RankData[10]
+                long Attribute1
+                long Attribute2
+                long FirstSkill
+                long SecondSkill
+                long Faction
+        long SkillID[6]
+        long Unknown1 (-1)?
+        long Flags
+                1 = Hidden from Player
+ANAM = Faction name string
+INTV = Faction reaction value (4 bytes, long)
+        The ANAM/INTV occur in pairs for each faction with
+        a reaction adjustment (usually -4 to +4)
+</p>
+</div>
+</div>
+<div id="outline-container-orgb2ec64e" class="outline-2">
+<h2 id="orgb2ec64e"><span class="section-number-2">8.</span> RACE =    10 (   693,    751.50,    881)</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Race Definition, 693 to 881 (752 average)
+NAME = Race ID string
+FNAM = Race name string
+RADT = Race data (140 bytes)
+        SkillBonuses[7]
+                long SkillID
+                long Bonus
+        long Strength[2]	(Male/Female)
+        long Intelligence[2]
+        long Willpower[2]
+        long Agility[2]
+        long Speed[2]
+        long Endurance[2]
+        long Personality[2]
+        long Luck[2]
+        float Height[2]
+        float Weight[2]
+        long Flags
+                1 = Playable
+                2 = Beast Race
+NPCS = Special power/ability name string (32 bytes), multiple
+DESC = Race description
+</p>
+</div>
+</div>
+<div id="outline-container-orgf1f510d" class="outline-2">
+<h2 id="orgf1f510d"><span class="section-number-2">9.</span> SOUN =   430 (    44,     60.52,     80)</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+Sound
+NAME = Sound ID
+FNAM = Sound Filename (relative to Sounds\)
+DATA = Sound Data (3 bytes)
+        byte Volume (0=0.00, 255=1.00)
+        byte MinRange
+        byte MaxRange
+</p>
+</div>
+</div>
+<div id="outline-container-org8f55d55" class="outline-2">
+<h2 id="org8f55d55"><span class="section-number-2">10.</span> SKIL =    27 (   144,    247.44,    330)</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Skill
+INDX = Skill ID (4 bytes, long)
+        The Skill ID (0 to 26) since skills are hardcoded in the game
+SKDT = Skill Data (24 bytes)
+        long Attribute
+        long Specialization
+                0 = Combat
+                1 = Magic
+                2 = Stealth
+        float UseValue[4]
+                The use types for each skill are hard-coded.
+DESC = Skill description string
+</p>
+</div>
+</div>
+<div id="outline-container-org046acdd" class="outline-2">
+<h2 id="org046acdd"><span class="section-number-2">11.</span> MGEF =   137 (   113,    432.65,    665)</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+Magic Effect
+INDX = The Effect ID (0 to 137) (4 bytes, long)
+MEDT = Effect Data (36 bytes)
+        long  SpellSchool
+                0 = Alteration
+                1 = Conjuration
+                2 = Destruction
+                3 = Illusion
+                4 = Mysticism
+                5 = Restoration
+        float BaseCost
+        long  Flags
+                0x0200 = Spellmaking
+                0x0400 = Enchanting
+                0x0800 = Negative
+        long  Red
+        long  Blue
+        long  Green
+        float SpeedX
+        float SizeX
+        float SizeCap
+ITEX = Effect Icon string
+PTEX = Particle texture string
+CVFX = Casting visual string
+BVFX = Bolt visual string
+HVFX = Hit visual string
+AVFX = Area visual string
+DESC = Description text
+CSND = Cast sound (optional)
+BSND = Bolt sound (optional)
+HSND = Hit sound (optional)
+ASND = Area sound (optional)
+</p>
+</div>
+</div>
+<div id="outline-container-orgbca7941" class="outline-2">
+<h2 id="orgbca7941"><span class="section-number-2">12.</span> SCPT =   631 (   100,   1248.95,   9966)</h2>
+<div class="outline-text-2" id="text-12">
+<p>
+Script
+SCHD = Script Header (52 bytes)
+        char Name[32]
+        long NumShorts
+        long NumLongs
+        long NumFloats
+        long ScriptDataSize
+        long LocalVarSize
+SCVR = List of all the local script variables seperated by '\0' NULL characters.
+SCDT = The compiled script data
+SCTX = Script text
+</p>
+</div>
+</div>
+<div id="outline-container-org6582ab4" class="outline-2">
+<h2 id="org6582ab4"><span class="section-number-2">13.</span> REGN =     9 (   313,    682.44,   1219)</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+Region
+NAME = Region ID string
+FNAM = Region name string
+WEAT = Weather Data (8 bytes)
+        byte Clear
+        byte Cloudy
+        byte Foggy
+        byte Overcast
+        byte Rain
+        byte Thunder
+        byte Ash
+        byte Blight
+BNAM = Sleep creature string
+CNAM = Map Color (4 bytes, COLORREF)
+        byte Red
+        byte Green
+        byte Blue
+        byte Null
+SNAM = Sound Record
+        byte SoundName[32] (lots of extra junk beyond string?)
+        byte Chance
+        Multiple records with the order determining the sound priority
+</p>
+</div>
+</div>
+<div id="outline-container-org5eebb69" class="outline-2">
+<h2 id="org5eebb69"><span class="section-number-2">14.</span> BSGN =    13 (   158,    199.23,    272)</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+Birth Sign
+NAME = Sign ID string
+FNAM = Sign name string
+TNAM = Texture filename
+DESC = Description string
+NPCS = Spell/ability (32 bytes), multiple
+</p>
+</div>
+</div>
+<div id="outline-container-org5f32c09" class="outline-2">
+<h2 id="org5f32c09"><span class="section-number-2">15.</span> LTEX =   107 (    48,     62.84,     76)</h2>
+<div class="outline-text-2" id="text-15">
+<p>
+Land Texture?
+</p>
+</div>
+</div>
+<div id="outline-container-org1b0dc4d" class="outline-2">
+<h2 id="org1b0dc4d"><span class="section-number-2">16.</span> STAT =  2788 (    39,     59.74,     79)</h2>
+<div class="outline-text-2" id="text-16">
+<p>
+Static
+NAME = ID string
+MODL = NIF model
+</p>
+</div>
+</div>
+<div id="outline-container-org08e32d2" class="outline-2">
+<h2 id="org08e32d2"><span class="section-number-2">17.</span> DOOR =   140 (    47,    134.68,    185)</h2>
+<div class="outline-text-2" id="text-17">
+<p>
+Door Definition
+NAME = door ID
+FNAM = door name
+MODL = NIF model filename
+SCIP = Script (optional)
+SNAM = Sound name open
+ANAM = Sound name close
+</p>
+</div>
+</div>
+<div id="outline-container-orgdee1b8f" class="outline-2">
+<h2 id="orgdee1b8f"><span class="section-number-2">18.</span> MISC =   536 (    99,    134.01,    176)</h2>
+<div class="outline-text-2" id="text-18">
+<p>
+Misc Items
+NAME = item ID, required
+MODL = model filename, required
+FNAM = item name
+MCDT = Weapon Data, 12 bytes binary, required
+        float Weight
+        long  Value
+        long  Unknown
+ITEX = Iventory icon filename
+ENAM = Enchantment ID string???
+SCRI = script ID string
+</p>
+</div>
+</div>
+<div id="outline-container-orgb36a5ef" class="outline-2">
+<h2 id="orgb36a5ef"><span class="section-number-2">19.</span> WEAP =   485 (    90,    162.62,    222)</h2>
+<div class="outline-text-2" id="text-19">
+<p>
+Weapons
+NAME = item ID, required
+MODL = model filename, required
+FNAM = item name
+WPDT = Weapon Data, 0x20 bytes binary, required
+        float Weight
+        long  Value
+        short Type? (0 to 13)
+                0 = ShortBladeOneHand
+                1 = LongBladeOneHand
+                2 = LongBladeTwoClose
+                3 = BluntOneHand
+                4 = BluntTwoClose
+                5 = BluntTwoWide
+                6 = SpearTwoWide
+                7 = AxeOneHand
+                8 = AxeTwoHand
+                9 = MarksmanBow
+                10 = MarksmanCrossbow
+                11 = MarksmanThrown
+                12 = Arrow
+                13 = Bolt
+        short Health
+        float Speed
+        float Reach
+        short EnchantPts
+        byte  ChopMin
+        byte  ChopMax
+        byte  SlashMin
+        byte  SlashMax
+        byte  ThrustMin
+        byte  ThrustMax
+        long  Flags (0 to 1)
+                0 = ?
+                1 = Ignore Normal Weapon Resistance?
+ITEX = Iventory icon filename
+ENAM = Enchantment ID string
+SCRI = script ID string
+</p>
+</div>
+</div>
+<div id="outline-container-org6f89e21" class="outline-2">
+<h2 id="org6f89e21"><span class="section-number-2">20.</span> CONT =   890 (    80,    284.19,  10371)</h2>
+<div class="outline-text-2" id="text-20">
+<p>
+Containers
+NAME = ID
+MODL = NIF Model
+FNAM = Container name
+CNDT = Container data (4 bytes)
+        float Weight
+FLAG = Container flags (4 bytes, bit-field)
+        0x0001  = Organic
+        0x0002	= Respawns, organic only
+        0x0008	= Default, unknown
+NPCO = An item record (36 bytes, 0+ times)
+        long	Count	  Number of the item
+        char	Name[32]  The ID of the item
+</p>
+</div>
+</div>
+<div id="outline-container-orgd85baa9" class="outline-2">
+<h2 id="orgd85baa9"><span class="section-number-2">21.</span> SPEL =   982 (    76,    109.80,    345)</h2>
+<div class="outline-text-2" id="text-21">
+<p>
+Spells
+NAME = Spell ID
+FNAM = Spell Name
+SPDT = Spell Data (12 bytes)
+        long Type
+                0 = Spell
+                1 = Ability
+                2 = Blight
+                3 = Disease
+                4 = Curse
+                5 = Power
+        long SpellCost
+        long Flags
+                0x0001 = AutoCalc
+                0x0002 = PC Start
+                0x0004 = Always Succeeds
+ENAM = Enchantment data (24 bytes, 0 to 8)
+</p>
+</div>
+</div>
+<div id="outline-container-org8a102e6" class="outline-2">
+<h2 id="org8a102e6"><span class="section-number-2">22.</span> CREA =   260 (   213,    412.08,    780)</h2>
+<div class="outline-text-2" id="text-22">
+<p>
+Creatures
+NAME = ID
+MODL = NIF Model
+FNAM = Creature name
+NPDT = Creature data, 96 bytes
+        long Type
+                0 = Creature
+                1 = Daedra
+                2 = Undead
+                3 = Humanoid
+        long Level
+        long Strength
+        long Intelligence
+        long Willpower
+        long Agility
+        long Speed
+        long Endurance
+        long Personality
+        long Luck
+        long Health
+        long SpellPts
+        long Fatigue
+        long Soul
+        long Combat
+        long Magic
+        long Stealth
+        long AttackMin1
+        long AttackMax1
+        long AttackMin2
+        long AttackMax2
+        long AttackMin3
+        long AttackMax3
+        long Gold
+FLAG = Creature Flags (4 bytes, bit field)
+        0x0001 = Biped
+        0x0002 = Respawn
+        0x0004 = Weapon and shield
+        0x0008 = None
+        0x0010 = Swims
+        0x0020 = Flies
+        0x0040 = Walks
+        0x0048 = Default flags
+        0x0080 = Essential
+        0x0400 = Skeleton Blood
+        0x0800 = Metal Blood
+SCRI = Script
+NPCO = Item record (36 bytes, 0+ times)
+        long	Count	  Number of the item
+        char	Name[32]  The ID of the item
+AIDT = AI data (12 bytes)
+AI<sub>W</sub> = AI Wander (14 bytes)
+        short Distance
+        byte  Duration
+        byte  TimeOfDay
+        byte  Idle[10]
+AI<sub>T</sub> = AI Travel?
+AI<sub>F</sub> = AI Follow?
+AI<sub>E</sub> = AI Escort?
+AI<sub>A</sub> = AI Activate?
+XSCL = Scale (4 bytes, float, optional)
+        Only present if the scale is not 1.0
+</p>
+</div>
+</div>
+<div id="outline-container-org2645273" class="outline-2">
+<h2 id="org2645273"><span class="section-number-2">23.</span> BODY =  1125 (    75,     92.73,    103)</h2>
+<div class="outline-text-2" id="text-23">
+<p>
+Body Parts
+BYDT = Body part data (4 bytes)
+        byte Part
+                0 = Head
+                1 = Hair
+                2 = Neck
+                3 = Chest
+                4 = Groin
+                5 = Hand
+                6 = Wrist
+                7 = Forearm
+                8 = Upperarm
+                9 = Foot
+                10 = Ankle
+                11 = Knee
+                12 = Upperleg
+                13 = Clavicle
+                14 = Tail
+        byte Vampire
+        byte Flags
+                1 = Female
+                2 = Playable
+        byte PartType
+                0 = Skin
+                1 = Clothing
+                2 = Armor
+</p>
+</div>
+</div>
+<div id="outline-container-orgba648b3" class="outline-2">
+<h2 id="orgba648b3"><span class="section-number-2">24.</span> LIGH =   574 (    55,    105.77,    197)</h2>
+<div class="outline-text-2" id="text-24">
+<p>
+Lights
+NAME = ID string
+FNAM = Item name (optional)
+LHDT = Light data (24 bytes)
+        float Weight
+        long  Value
+        long  Time
+        long  Radius
+        byte  Red	}
+        byte  Green	}
+        byte  Blue	} long ColorRef?
+        byte  Null	}
+        long  Flags
+                0x0001 = Dynamic
+                0x0002 = Can Carry
+                0x0004 = Negative
+                0x0008 = Flicker
+                0x0010 = Fire
+                0x0020 = Off Default
+                0x0040 = Flicker Slow
+                0x0080 = Pulse
+                0x0100 = Pulse Slow
+</p>
+
+<p>
+SCPT = Script name (optional)
+ITEX = Inventory icon (optional)
+MODL = NIF model name
+SNAM = Sound name
+</p>
+</div>
+</div>
+<div id="outline-container-org36f4a69" class="outline-2">
+<h2 id="org36f4a69"><span class="section-number-2">25.</span> ENCH =   708 (    57,     98.59,    311)</h2>
+<div class="outline-text-2" id="text-25">
+<p>
+Enchanting Effects
+NAME = ID string
+ENDT = Enchant Data (16 bytes)
+        long Type
+                0 = Cast Once
+                1 = Cast Strikes
+                2 = Cast when Used
+                3 = Constant Effect
+        long EnchantCost
+        long Charge
+        long AutoCalc
+ENAM = Single enchantment data (24 bytes)
+        short EffectID
+        byte  SkillID		(-1 if NA)
+        byte  AttributeID	(-1 if NA)
+        long  RangeType
+                0 = Self
+                1 = Touch
+                2 = Target
+        long  Area
+        long  Duration
+        long  MagMin
+        long  MagMax
+</p>
+</div>
+</div>
+<div id="outline-container-org71d07a6" class="outline-2">
+<h2 id="org71d07a6"><span class="section-number-2">26.</span> NPC_ =  2675 (   233,    619.12,   6236)</h2>
+<div class="outline-text-2" id="text-26">
+<p>
+NPCs
+NAME = NPC ID string
+FNAM = NPC name
+MODL = Animation file
+RNAM = Race Name	}
+ANAM = Faction name	} Required, even if empty
+BNAM = Head model	}
+CNAM = Class name
+KNAM = Hair model	}
+NPDT = NPC Data (12 bytes or 52 bytes?)
+        short Level
+        byte  Strength
+        byte  Intelligence
+        byte  Willpower
+        byte  Agility
+        byte  Speed
+        byte  Endurance
+        byte  Personality
+        byte  Luck
+        byte  Skills[27]  } According to the skillID (0-26)
+        byte  Reputation
+        short Health
+        short SpellPts
+        short Fatigue
+        byte  Disposition
+        byte  FactionID
+        byte  Rank
+        byte  Unknown1
+        long  Gold
+</p>
+
+<p>
+        12 byte Version
+        short Level
+        byte  Disposition
+        byte  FactionID?
+        byte  Rank
+        byte  Unknown1
+        byte  Unknown2
+        byte  Unknown3
+        long  Gold?
+FLAG = NPC Flags (4 bytes, long)
+        0x0001 = Female
+        0x0002 = Essential
+        0x0004 = Respawn
+        0x0008 = None?
+        0x0010 = Autocalc
+        0x0400 = Blood Skel
+        0x0800 = Blood Metal
+NPCO = NPC item (36 bytes, occurs 0+ times)
+        long	Count	  Number of the item
+        char	Name[32]  The ID of the item
+NPCS = NPC spell (32 bytes, occurs 0+ times)
+        char	Name[32]  The ID of the item
+AIDT = AI data (12 bytes)
+        byte Hello
+        byte Unknown1
+        byte Fight
+        byte Flee
+        byte Alarm
+        byte Unknown2
+        byte Unknown3
+        byte Unknown4
+        long Flags
+                0x00001 = Weapon
+                0x00002 = Armor
+                0x00004 = Clothing
+                0x00008 = Books
+                0x00010 = Ingrediant
+                0x00020 = Picks
+                0x00040 = Probes
+                0x00080 = Lights
+                0x00100 = Apparatus
+                0x00200 = Repair
+                0x00400 = Misc
+                0x00800 = Spells
+                0x01000 = Magic Items
+                0x02000 = Potions
+                0x04000 = Training
+                0x08000 = Spellmaking
+                0x10000 = Enchanting
+                0x20000 = Repair Item
+AI<sub>W</sub> = AI bytes (14 bytes)
+        short Distance
+        short Duration
+        byte  TimeOfDay
+        byte  Idle[8]
+        byte  Unknown (1?)
+AI<sub>T</sub> = AI Travel (16 bytes)
+        float X
+        float Y
+        float Z
+        long  Unknown (1?)
+AI<sub>F</sub> = AI Follow (48 bytes)
+        float X
+        float Y
+        float Z
+        short Duration
+        char  ID[32]
+        short Unknown (0100?)
+AI<sub>E</sub> = AI Escort (48 bytes)
+        float X
+        float Y
+        float Z
+        short Duration
+        char  ID[32]
+        short Unknown (0100?)
+CNDT = Cell escort/follow to string (optional)
+AI<sub>A</sub> = AI Activate (33 bytes)
+        char Name[32]
+        byte Unknown (1?)
+DODT = Cell Travel Destination
+        float XPos
+        float YPos
+        float ZPos
+        float XRot
+        float YRot
+        float ZRot
+DNAM = Cell name for previous DODT, if interior
+XSCL = Scale (4 bytes, float, optional)
+        Only present if the scale is not 1.0
+</p>
+</div>
+</div>
+<div id="outline-container-org7c5dec9" class="outline-2">
+<h2 id="org7c5dec9"><span class="section-number-2">27.</span> ARMO =   280 (   155,    217.10,    346)</h2>
+<div class="outline-text-2" id="text-27">
+<p>
+Armour
+NAME = Item ID, required
+MODL = Model Filename, required
+FNAM = Item Name, required
+AODT = Armour Data, required (24 bytes)
+        long  Type
+                0 = Helmet
+                1 = Cuirass
+                2 = L. Pauldron
+                3 = R. Pauldron
+                4 = Greaves
+                5 = Boots
+                6 = L. Gauntlet
+                7 = R. Gauntlet
+                8 = Shield
+                9 = L. Bracer
+                10 = R. Bracer
+        float Weight
+        long  Value
+        long  Health
+        long  EnchantPts
+        long  Armour
+ITEX = Icon Filename, required
+INDX = Body Part Index (1 byte)
+        0 = Head
+        1 = Hair
+        2 = Neck
+        3 = Cuirass
+        4 = Groin
+        5 = Skirt
+        6 = Right Hand
+        7 = Left Hand
+        8 = Right Wrist
+        9 = Left Wrist
+        10 = Shield
+        11 = Right Forearm
+        12 = Left Forearm
+        13 = Right Upper Arm
+        14 = Left Upper Arm
+        15 = Right Foot
+        16 = Left Foot
+        17 = Right Ankle
+        18 = Left Ankle
+        19 = Right Knee
+        20 = Left Knee
+        21 = Right Upper Leg
+        22 = Left Upper Leg
+        23 = Right Pauldron
+        24 = Left Pauldron
+        25 = Weapon
+        26 = Tail
+BNAM = Male Part Name
+CNAM = Female Body Part Name (0 occurences)
+        INDX and BNAM/CNAM are grouped together.  INDX first followed
+        by an optional BNAM (no BNAM indicates a NULL field for that index).
+        Up to 7 pairs allowed.
+SCRI = Script Name
+ENAM = Enchantment Name
+</p>
+</div>
+</div>
+<div id="outline-container-orgc90f439" class="outline-2">
+<h2 id="orgc90f439"><span class="section-number-2">28.</span> CLOT =   510 (   123,    203.98,    658)</h2>
+<div class="outline-text-2" id="text-28">
+<p>
+Clothing
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+CTDT = Clothing Data (12 bytes), required
+        long  Type
+                0 = Pants
+                1 = Shoes
+                2 = Shirt
+                3 = Belt
+                4 = Robe
+                5 = Right Glove
+                6 = Left Glove
+                7 = Skirt
+                8 = Ring
+                9 = Amulet
+        float Weight
+        short Value
+        short EnchantPts
+</p>
+
+<p>
+ITEX = Inventory Icon
+INDX = Body Part Index (1 byte)
+BNAM = Male Body Part Name
+CNAM = Female Body Part Name
+        INDX and BNAM/CNAM are grouped together.  INDX first followed
+        by an optional BNAM (no BNAM indicates a NULL field for that index).
+        Up to 7 pairs allowed.
+ENAM = Enchantment Name
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-orged9488a" class="outline-2">
+<h2 id="orged9488a"><span class="section-number-2">29.</span> REPA =     6 (   124,    145.67,    158)</h2>
+<div class="outline-text-2" id="text-29">
+<p>
+Repair Items
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+RIDT = Repair Data (16 bytes), required
+        float	Weight
+        long	Value
+        long	Uses
+        float	Quality
+ITEX = Inventory Icon
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-orgaf7bf71" class="outline-2">
+<h2 id="orgaf7bf71"><span class="section-number-2">30.</span> ACTI =   697 (    52,     93.60,    138)</h2>
+<div class="outline-text-2" id="text-30">
+<p>
+Activator
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-org6347e42" class="outline-2">
+<h2 id="org6347e42"><span class="section-number-2">31.</span> APPA =    22 (   139,    152.59,    167)</h2>
+<div class="outline-text-2" id="text-31">
+<p>
+Alchemy Apparatus
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+AADT = Alchemy Data (16 bytes), required
+        long    Type
+                0 = Mortar and Pestle
+                1 = Albemic
+                2 = Calcinator
+                3 = Retort
+        float	Quality
+        float	Weight
+        long	Value
+ITEX = Inventory Icon
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-org1874530" class="outline-2">
+<h2 id="org1874530"><span class="section-number-2">32.</span> LOCK =     6 (   126,    136.17,    145)</h2>
+<div class="outline-text-2" id="text-32">
+<p>
+Lockpicking Items
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+LKDT = Lock Data (16 bytes), required
+        float	Weight
+        long	Value
+        float	Quality
+        long    Uses
+ITEX = Inventory Icon
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-orgd3fa12e" class="outline-2">
+<h2 id="orgd3fa12e"><span class="section-number-2">33.</span> PROB =     6 (   124,    136.33,    145)</h2>
+<div class="outline-text-2" id="text-33">
+<p>
+Probe Items
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+PBDT = Probe Data (16 bytes), required
+        float	Weight
+        long	Value
+        float	Quality
+        long    Uses
+ITEX = Inventory Icon
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-orga969a62" class="outline-2">
+<h2 id="orga969a62"><span class="section-number-2">34.</span> INGR =    95 (   151,    181.66,    227)</h2>
+<div class="outline-text-2" id="text-34">
+<p>
+Ingrediants
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+IRDT = Ingrediant Data (56 bytes), required
+        float  Weight
+        long   Value
+        long   EffectID[4]	0 or -1 means no effect
+        long   SkillID[4]	only for Skill related effects, 0 or -1 otherwise
+        long   AttributeID[4]  only for Attribute related effects, 0 or -1 otherwise
+ITEX = Inventory Icon
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-orge63999a" class="outline-2">
+<h2 id="orge63999a"><span class="section-number-2">35.</span> BOOK =   574 (   131,   3306.91,  42120)</h2>
+<div class="outline-text-2" id="text-35">
+<p>
+Books
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+BKDT = Book Data (20 bytes), required
+        float  Weight
+        long   Value
+        long   Scroll	(1 is scroll, 0 not)
+        long   SkillID	(-1 is no skill)
+        long   EnchantPts
+ITEX = Inventory Icon
+SCRI = Script Name
+TEXT = Book text
+</p>
+</div>
+</div>
+<div id="outline-container-orge49aa8c" class="outline-2">
+<h2 id="orge49aa8c"><span class="section-number-2">36.</span> ALCH =   258 (   163,    188.15,    334)</h2>
+<div class="outline-text-2" id="text-36">
+<p>
+Alchemy?
+NAME = Item ID, required
+MODL = Model Name, required
+FNAM = Item Name, required
+ALDT = Alchemy Data (12 bytes), required
+        float  Weight
+        long   Value
+        long   AutoCalc
+ENAM = Enchantment (24 bytes) 1 to 8 per record
+        short EffectID
+        byte  SkillID		for skill related effects, -1/0 otherwise
+        byte  AttributeID	for attribute related effects, -1/0 otherwise
+        long  Unknown1
+        long  Unknown2
+        long  Duration
+        long  Magnitude
+        long  Unknown4
+TEXT = Inventory Icon
+SCRI = Script Name
+</p>
+</div>
+</div>
+<div id="outline-container-orged445c4" class="outline-2">
+<h2 id="orged445c4"><span class="section-number-2">37.</span> LEVI =   227 (    80,    486.23,   9201)</h2>
+<div class="outline-text-2" id="text-37">
+<p>
+Levelled Items
+Levelled Creatures
+NAME = ID of levelled list
+DATA = List data (4 bytes, long)
+        1 = Calc from all levels &lt;= PC level
+        2 = Calc for each item
+NNAM = Chance None? (1 byte)
+INDX = Number of items in list (4 bytes, long)
+INAM = ID string of list item
+INTV = PC level for previous INAM (2 bytes, short)
+        The INAM/INTV can occur many times in pairs
+</p>
+</div>
+</div>
+<div id="outline-container-org79b067e" class="outline-2">
+<h2 id="org79b067e"><span class="section-number-2">38.</span> LEVC =   116 (    97,    326.54,   1105)</h2>
+<div class="outline-text-2" id="text-38">
+<p>
+Levelled Creatures
+NAME = ID of levelled list
+DATA = List data (4 bytes, long)
+        1 = Calc from all levels &lt;= PC level
+NNAM = Chance None? (1 byte)
+INDX = Number of items in list (4 bytes, long)
+CNAM = ID string of list item
+INTV = PC level for previous CNAM (2 bytes, short)
+        The CNAM/INTV can occur many times in pairs
+</p>
+</div>
+</div>
+<div id="outline-container-org952d993" class="outline-2">
+<h2 id="org952d993"><span class="section-number-2">39.</span> CELL =  2538 (    29,  10151.12, 104488)</h2>
+<div class="outline-text-2" id="text-39">
+</div>
+<div id="outline-container-org2e8e495" class="outline-3">
+<h3 id="org2e8e495"><span class="section-number-3">39.1.</span> Cell Definitions</h3>
+<div class="outline-text-3" id="text-39-1">
+<dl class="org-dl">
+<dt>NAME</dt><dd>Cell ID string. Can be an empty string for exterior cells in which case the region name is used instead.</dd>
+<dt>DATA</dt><dd>Cell Data
+<ul class="org-ul">
+<li>long Flags
+<ul class="org-ul">
+<li>0x01 = Interior?</li>
+<li>0x02 = Has Water</li>
+<li>0x04 = Illegal to Sleep here</li>
+<li>0x80 = Behave like exterior (Tribunal)</li>
+</ul></li>
+<li>long GridX</li>
+<li>long GridY</li>
+</ul></dd>
+<dt>RGNN</dt><dd>Region name string</dd>
+<dt>NAM0</dt><dd>Optional
+Number of objects in cell in current file? (4 byte, long)</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-orgc8713ab" class="outline-3">
+<h3 id="orgc8713ab"><span class="section-number-3">39.2.</span> Exterior Cell Sub-Records</h3>
+<div class="outline-text-3" id="text-39-2">
+<dl class="org-dl">
+<dt>NAM5</dt><dd>Map Color (4 bytes, long, COLORREF)</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org376a632" class="outline-3">
+<h3 id="org376a632"><span class="section-number-3">39.3.</span> Interior Cell Sub-Records</h3>
+<div class="outline-text-3" id="text-39-3">
+<dl class="org-dl">
+<dt>WHGT</dt><dd>Water Height (4 bytes, float)</dd>
+<dt>AMBI</dt><dd>Ambient Light Level (16 bytes)
+<ul class="org-ul">
+<li>long AmbientColor</li>
+<li>long SunlightColor</li>
+<li>long FogColor</li>
+<li>float FogDensity</li>
+</ul></dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org0530518" class="outline-3">
+<h3 id="org0530518"><span class="section-number-3">39.4.</span> Referenced Object Data Grouping</h3>
+<div class="outline-text-3" id="text-39-4">
+<dl class="org-dl">
+<dt>FRMR</dt><dd><p>
+Object Index (starts at 1) (4 bytes, long)
+</p>
+
+<p>
+This is used to uniquely identify objects in the cell. For new files the index
+starts at 1 and is incremented for each new object added. For modified objects
+the index is kept the same.
+</p></dd>
+<dt>NAME</dt><dd>Object ID string</dd>
+<dt>XSCL</dt><dd>Scale (4 bytes, float) Static</dd>
+<dt>DELE</dt><dd>(4 byte long) Indicates that the reference is deleted.</dd>
+<dt>DODT</dt><dd>Door data: XYZ Position, XYZ Rotation of exit (24 bytes, Door objects)
+<ul class="org-ul">
+<li>float XPos</li>
+<li>float YPos</li>
+<li>float ZPos</li>
+<li>float XRotate</li>
+<li>float YRotate</li>
+<li>float ZRotate</li>
+</ul></dd>
+<dt>DNAM</dt><dd>Door exit name (Door objects)</dd>
+<dt>FLTV</dt><dd>Follows the DNAM optionally, lock level (long)</dd>
+<dt>KNAM</dt><dd>Door key</dd>
+<dt>TNAM</dt><dd>Trap name</dd>
+<dt>UNAM</dt><dd>Reference Blocked (1 byte, 00?), only occurs once in MORROWIND.ESM</dd>
+<dt>ANAM</dt><dd>Owner ID string</dd>
+<dt>BNAM</dt><dd>Global variable/rank ID string</dd>
+<dt>INTV</dt><dd>Number of uses (4 bytes, long, 1 default), occurs even for objects that don't use it</dd>
+<dt>NAM9</dt><dd>? (4 bytes, long, 0x00000001)</dd>
+<dt>XSOL</dt><dd>Soul Extra Data (ID string of creature)</dd>
+<dt>DATA</dt><dd>Ref Position Data (24 bytes)
+<ul class="org-ul">
+<li>float XPos</li>
+<li>float YPos</li>
+<li>float ZPos</li>
+<li>float XRotate</li>
+<li>float YRotate</li>
+<li>float ZRotate</li>
+</ul></dd>
+</dl>
+</div>
+</div>
+</div>
+<div id="outline-container-org38d6d1e" class="outline-2">
+<h2 id="org38d6d1e"><span class="section-number-2">40.</span> LAND =  1390 (    28,  27374.14,  30243)</h2>
+<div class="outline-text-2" id="text-40">
+<p>
+Landscape
+INTV (8 bytes)
+        long CellX
+        long CellY
+                The cell coordinates of the cell.
+DATA (4 bytes)
+        long Unknown (default of 0x09)
+                Changing this value makes the land 'disappear' in the editor.
+VNML (12675 bytes)
+        struct {
+          signed byte X
+          signed byte Y
+          signed byte Z
+        } normals[65][65];
+                A RGB color map 65x65 pixels in size representing the land normal vectors.
+                The signed value of the 'color' represents the vector's component. Blue
+                is vertical (Z), Red the X direction and Green the Y direction. Note that
+                the y-direction of the data is from the bottom up.
+VHGT (4232 bytes)
+        float Unknown1
+                A height offset for the entire cell. Decreasing this value will shift the
+                entire cell land down.
+        byte Unknown2 (0x00)
+        signed byte  HeightData[65][65]
+                Contains the height data for the cell in the form of a 65x65 pixel array. The
+                height data is not absolute values but uses differences between adjacent pixels.
+                Thus a pixel value of 0 means it has the same height as the last pixel. Note that
+                the y-direction of the data is from the bottom up.
+        short Unknown2 (0x0000)
+WNAM (81 bytes)
+        byte Data[9][9]
+                Unknown byte data.
+VCLR (12675 bytes) optional
+        Vertex color array, looks like another RBG image 65x65 pixels in size.
+VTEX (512 bytes) optional
+        A 16x16 array of short texture indices (from a LTEX record I think).
+</p>
+</div>
+</div>
+<div id="outline-container-org4cd2a16" class="outline-2">
+<h2 id="org4cd2a16"><span class="section-number-2">41.</span> PGRD =  1194 (   101,    996.60,   8261)</h2>
+<div class="outline-text-2" id="text-41">
+<p>
+Path Grid
+</p>
+</div>
+</div>
+<div id="outline-container-org0d02596" class="outline-2">
+<h2 id="org0d02596"><span class="section-number-2">42.</span> SNDG =   168 (    50,     75.86,     94)</h2>
+<div class="outline-text-2" id="text-42">
+<p>
+Sound Generator
+NAME = Name? (DEFAULT0001, ALIT0001, etc&#x2026;)
+DATA = Sound Type Data (4 bytes, long)
+        0 = Left Foot
+        1 = Right Foot
+        2 = Swim Left
+        3 = Swim Right
+        4 = Moan
+        5 = Roar
+        6 = Scream
+        7 = Land
+SNAM = Sound ID string
+CNAM = Creature name (optional)
+</p>
+</div>
+</div>
+<div id="outline-container-orgd246de1" class="outline-2">
+<h2 id="orgd246de1"><span class="section-number-2">43.</span> Dialogue and Information record pairs</h2>
+<div class="outline-text-2" id="text-43">
+</div>
+<div id="outline-container-orgcacc981" class="outline-3">
+<h3 id="orgcacc981"><span class="section-number-3">43.1.</span> DIAL =   772 (    24,     33.54,     54)</h3>
+<div class="outline-text-3" id="text-43-1">
+<p class="verse">
+Dialogue topic (including journals)<br />
+NAME = Dialogue ID string<br />
+DATA = Dialogue Type? (1 byte, 4 bytes for deleted?)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0 = Regular Topic<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;1 = Voice?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;2 = Greeting?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;3 = Persuasion?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;4 = Journal<br />
+What follows in the ESP/ESM are all the INFO records that belong to the<br />
+DIAL record (one of the few cases where order is important).<br />
+</p>
+</div>
+</div>
+<div id="outline-container-orgb148be0" class="outline-3">
+<h3 id="orgb148be0"><span class="section-number-3">43.2.</span> INFO =  3408 (   107,    299.86,   1063)</h3>
+<div class="outline-text-3" id="text-43-2">
+<p class="verse">
+Dialogue response record that belongs to previous DIAL record.<br />
+INAM = Info name string (unique sequence of #'s), ID<br />
+PNAM = Previous info ID<br />
+NNAM = Next info ID (form a linked list of INFOs for the DIAL). First<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;INFO has an empty PNAM, last has an empty NNAM.<br />
+DATA = Info data (12 bytes)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;long Unknown1<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;long Disposition<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte Rank (0-10)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte Gender<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0xFF = None<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x00 = Male<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x01 = Female<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte PCRank (0-10)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte Unknown2<br />
+ONAM = Actor string<br />
+RNAM = Race string<br />
+CNAM = Class string<br />
+FNAM = Faction string<br />
+ANAM = Cell string<br />
+DNAM = PC Faction string<br />
+NAME = The info response string (512 max)<br />
+SNAM = Sound filename<br />
+QSTN = Journal Name (1 byte, 0x01)<br />
+QSTF = Journal Finished (1 byte, 0x01)<br />
+QSTR = Journal Restart (1 byte, 0x01)<br />
+SCVR = String for the function/variable choice (5+ bytes)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  Index<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'0' to '5'<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  Type<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'0' = Nothing?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'1' = Function<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'2' = Global<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'3' = Local<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'4' = Journal<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'5' = Item<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'6' = Dead<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'7' = Not ID<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'8' = Not Faction<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'9' = Not Class<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'A' = Not Race<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'B' = Not Cell<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'C' = Not Local<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;short Function (2-byte string, '00' to '71')<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'sX' = Global/Local/Not Local types<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'JX' = Journal type<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'IX' = Item Type<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'DX' = Dead Type<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'XX' = Not ID Type<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'FX' = Not Faction<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'CX' = Not Class<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'RX' = Not Race<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'LX' = Not Cell<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte CompareOp<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'0' = '<code>'<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'1' = '!</code>'<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'2' = '&gt;'<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'3' = '&gt;='<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'4' = '&lt;'<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;'5' = '&lt;='<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte Name[]<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Except for the function type, this is the ID for the global/local/etc&#x2026;<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Is not nessecarily NULL terminated. The function type SCVR sub-record has<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;no name string.<br />
+<br />
+INTV =<br />
+FLTV = The function/variable result for the previous SCVR<br />
+BNAM = Result text (not compiled)<br />
+Size of master in bytes (64 bits)<br />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org104ec8d" class="outline-2">
+<h2 id="org104ec8d"><span class="section-number-2">44.</span> ESS Save Game Format Differences</h2>
+<div class="outline-text-2" id="text-44">
+<ul class="org-ul">
+<li>Custom objects (alchemy, magic items, and spells) hatve a unique numeric ID, much like
+the dialogue infos. The characters class is held in the NEWCLASSID<sub>CHARGEN</sub> class ID.</li>
+</ul>
+
+<p class="verse">
+GMDT (124 bytes)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;float Unknown[6]<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;- Unknown values<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;char  CellName[64]<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;- Current cell name of character?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;float Unknown<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;char CharacterName[32]<br />
+SCRD (20 bytes)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;unknown combination of short/longs? Related to SCRD?<br />
+SCRS (65536 bytes)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Looks like an array of byte data. Possible the save game screenshot.<br />
+SCPT<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Contains local variable information for global scripts?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;SLCS<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;SLCD<br />
+QUES<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Quest dialogue/journal values?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;NAME<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;- Quest name string<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;DATA<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;- INFO ID string?<br />
+<br />
+JOUR<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;The character's journal<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;NAME<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;- The entire journal text (HTML) in one section<br />
+KLST<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Kill stats?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;KNAM - Creature/NPC ID string<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;CNAM - Occurs just after the KNAM sub-record<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;long Value<br />
+FMAP - Map data?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;MAPH - (8 bytes) Map header?<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;long Size<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;long Value<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;MAPD - (786432 bytes) Map data? Size corresponds to an RGB 512x512 image.<br />
+PCDT<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;DNAM - Dialogue topic<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;MNAM<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;PNAM<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;SNAM<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;NAM9<br />
+</p>
+</div>
+</div>
+<div id="outline-container-orgcb9384d" class="outline-2">
+<h2 id="orgcb9384d"><span class="section-number-2">45.</span> Conversion from a biped to a bodypart types</h2>
+<div class="outline-text-2" id="text-45">
+<p class="verse">
+Armor Biped Type			BodyPart Type<br />
+0 = Head				0 = Head<br />
+1 = Hair				1 = Hair<br />
+2 = Neck				2 = Neck<br />
+3 = Cuirass				3 = Chest<br />
+4 = Groin				4 = Groin<br />
+5 = Skirt				4 = Groin<br />
+6 = Right Hand				5 = Hand<br />
+7 = Left Hand				5 = Hand<br />
+8 = Right Wrist				6 = Wrist<br />
+9 = Left Wrist				6 = Wrist<br />
+10 = Shield				6 = Wrist<br />
+11 = Right Forearm			7 = Forearm<br />
+12 = Left Forearm			7 = Forearm<br />
+13 = Right Upper Arm			8 = Upperarm<br />
+14 = Left Upper Arm			8 = Upperarm<br />
+15 = Right Foot				9 = Foot<br />
+16 = Left Foot				9 = Foot<br />
+17 = Right Ankle			10 = Ankle<br />
+18 = Left Ankle				10 = Ankle<br />
+19 = Right Knee				11 = Knee<br />
+20 = Left Knee				11 = Knee<br />
+21 = Right Upper Leg			12 = Uppperleg<br />
+22 = Left Upper Leg			12 = Upperleg<br />
+23 = Right Pauldron			13 = Clavicle<br />
+24 = Left Pauldron			13 = Clavicle<br />
+25 = Weapon				-1 = None?<br />
+26 = Tail				14 = Tail<br />
+</p>
+</div>
+</div>
+<div id="outline-container-orgc66f797" class="outline-2">
+<h2 id="orgc66f797"><span class="section-number-2">46.</span> INFO Function Codes (2-byte character string)</h2>
+<div class="outline-text-2" id="text-46">
+<dl class="org-dl">
+<dt>'00'</dt><dd>Rank Low</dd>
+<dt>'01'</dt><dd>Rank High</dd>
+<dt>'02'</dt><dd>Rank Requirement</dd>
+<dt>'03'</dt><dd>Reputation</dd>
+<dt>'04'</dt><dd>Health Percent</dd>
+<dt>'05'</dt><dd>PC Reputation</dd>
+<dt>'06'</dt><dd>PC Level</dd>
+<dt>'07'</dt><dd>PC Health Percent</dd>
+<dt>'08'</dt><dd>PC Magicka</dd>
+<dt>'09'</dt><dd>PC Fatigue</dd>
+<dt>'10'</dt><dd>PC Strength</dd>
+<dt>'11'</dt><dd>PC Block</dd>
+<dt>'12'</dt><dd>PC Armorer</dd>
+<dt>'13'</dt><dd>PC Medium Armor</dd>
+<dt>'14'</dt><dd>PC Heavy Armor</dd>
+<dt>'15'</dt><dd>PC Blunt Weapon</dd>
+<dt>'16'</dt><dd>PC Long Blade</dd>
+<dt>'17'</dt><dd>PC Axe</dd>
+<dt>'18'</dt><dd>PC Spear</dd>
+<dt>'19'</dt><dd>PC Athletics</dd>
+<dt>'20'</dt><dd>PC Enchant</dd>
+<dt>'21'</dt><dd>PC Destruction</dd>
+<dt>'22'</dt><dd>PC Alteration</dd>
+<dt>'23'</dt><dd>PC Illusion</dd>
+<dt>'24'</dt><dd>PC Conjuration</dd>
+<dt>'25'</dt><dd>PC Mysticism</dd>
+<dt>'26'</dt><dd>PC Restoration</dd>
+<dt>'27'</dt><dd>PC Alchemy</dd>
+<dt>'28'</dt><dd>PC Unarmored</dd>
+<dt>'29'</dt><dd>PC Security</dd>
+<dt>'30'</dt><dd>PC Sneak</dd>
+<dt>'31'</dt><dd>PC Acrobatics</dd>
+<dt>'32'</dt><dd>PC Light Armor</dd>
+<dt>'33'</dt><dd>PC Short Blade</dd>
+<dt>'34'</dt><dd>PC Marksman</dd>
+<dt>'35'</dt><dd>PC Mercantile</dd>
+<dt>'36'</dt><dd>PC Speechcraft</dd>
+<dt>'37'</dt><dd>PC Hand-to-Hand</dd>
+<dt>'38'</dt><dd>PC Gender</dd>
+<dt>'39'</dt><dd>PC Expelled</dd>
+<dt>'40'</dt><dd>PC Common Disease</dd>
+<dt>'41'</dt><dd>PC Blight Disease</dd>
+<dt>'42'</dt><dd>PC Clothing Modifier</dd>
+<dt>'43'</dt><dd>PC Crime Level</dd>
+<dt>'44'</dt><dd>Same Gender</dd>
+<dt>'45'</dt><dd>Same Race</dd>
+<dt>'46'</dt><dd>Same Faction</dd>
+<dt>'47'</dt><dd>Faction Rank Diff</dd>
+<dt>'48'</dt><dd>Detected</dd>
+<dt>'49'</dt><dd>Alarmed?</dd>
+<dt>'50'</dt><dd>Choice</dd>
+<dt>'51'</dt><dd>PC Intelligence</dd>
+<dt>'52'</dt><dd>PC Willpower</dd>
+<dt>'53'</dt><dd>PC Agility</dd>
+<dt>'54'</dt><dd>PC Speed</dd>
+<dt>'55'</dt><dd>PC Endurance</dd>
+<dt>'56'</dt><dd>PC Personality</dd>
+<dt>'57'</dt><dd>PC Luck</dd>
+<dt>'58'</dt><dd>PC Corprus</dd>
+<dt>'59'</dt><dd>Weather</dd>
+<dt>'60'</dt><dd>PC Vampire</dd>
+<dt>'61'</dt><dd>Level</dd>
+<dt>'62'</dt><dd>Attacked</dd>
+<dt>'63'</dt><dd>Talked to PC</dd>
+<dt>'64'</dt><dd>PC Health</dd>
+<dt>'65'</dt><dd>Creature Target</dd>
+<dt>'66'</dt><dd>Friend Hit</dd>
+<dt>'67'</dt><dd>Fight</dd>
+<dt>'69'</dt><dd>Hello</dd>
+<dt>'69'</dt><dd>Alarm</dd>
+<dt>'70'</dt><dd>Flee</dd>
+<dt>'71'</dt><dd>Should Attack</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-org65a6572" class="outline-2">
+<h2 id="org65a6572"><span class="section-number-2">47.</span> Skill Action/Use</h2>
+<div class="outline-text-2" id="text-47">
+<dl class="org-dl">
+<dt>Acrobatics</dt><dd>Jump, Fall</dd>
+<dt>Alchemy</dt><dd>Potion Use, Ingrediant Use</dd>
+<dt>Alteration</dt><dd>Successful Cast</dd>
+<dt>Armorer</dt><dd>Successful Repair</dd>
+<dt>Athletics</dt><dd>Second of Running, Second of Swimming</dd>
+<dt>Axe</dt><dd>Successful Attack</dd>
+<dt>Block</dt><dd>Successful Block</dd>
+<dt>Blunt Weapon</dt><dd>Successful Attack</dd>
+<dt>Conjuration</dt><dd>Successful Cast</dd>
+<dt>Destruction</dt><dd>Successful Cast</dd>
+<dt>Enchant</dt><dd>Recharge Item, Use Magic Item, Create Magic Item, Cast When Strikes</dd>
+<dt>Hand-To-Hand</dt><dd>Successful Attack</dd>
+<dt>Heavy Armor</dt><dd>Hit by Opponent</dd>
+<dt>Illusion</dt><dd>Successful Cast</dd>
+<dt>Light Armor</dt><dd>Hit by Opponent</dd>
+<dt>Long Blade</dt><dd>Successful Attack</dd>
+<dt>Marksman</dt><dd>Successful Attack</dd>
+<dt>Medium Armor</dt><dd>Hit by Opponent</dd>
+<dt>Mercantile</dt><dd>Successful Bargain, Successful Bribe</dd>
+<dt>Mysticism</dt><dd>Successful Cast</dd>
+<dt>Restoration</dt><dd>Successful Cast</dd>
+<dt>Security</dt><dd>Defeat Trap, Pick Lock</dd>
+<dt>Short Blade</dt><dd>Successful Attack</dd>
+<dt>Sneak</dt><dd>Avoid Notice, Successful Pick Pocket</dd>
+<dt>Spear</dt><dd>Successful Attack</dd>
+<dt>SpeechCraft</dt><dd>Successful Persuasion, Failed Persuasion</dd>
+<dt>Unarmored</dt><dd>Hit by Opponent</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-orgb7fc615" class="outline-2">
+<h2 id="orgb7fc615"><span class="section-number-2">48.</span> SCDT Compiled script data</h2>
+<div class="outline-text-2" id="text-48">
+<p class="verse">
+For commands with ID<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;short Code<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  IDLength<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;char  ID[]<br />
+<br />
+<br />
+IF Block<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;short Code = 0x0601<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  Unknown (00?)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  CompareLength<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  VarType<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x20<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  VarSize<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;s/l/f/G<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;local	short  VarIndex<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;1 based index of local variable by type<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;global	byte GlobalSize<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte GlobalName[]<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Not NULL terminated<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  CompareText[]<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Not NULL terminated<br />
+<br />
+SET Block<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;short Code = 0x0501<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;short VarCode (0x2073, &#x2026; )<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;(var data)<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  SetSize<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;byte  SetData[]<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;Data in stack order: (6*3+1 =&gt; 6 3 * 1 +)<br />
+<br />
+<br />
+Codes<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x2073 = Get short local var<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x206C = Get long local var<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x2066 = Get float local var<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x2047 = Get global var<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x010C =<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x1019 =<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x0501 = set<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x0601 = if<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x0101 = End<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;0x0901 = EndIf<br />
+</p>
+</div>
+</div>
+<div id="outline-container-orga979e53" class="outline-2">
+<h2 id="orga979e53"><span class="section-number-2">49.</span> Variables</h2>
+<div class="outline-text-2" id="text-49">
+<p>
+Vars are not defined in the SCDT.
+</p>
+
+<p>
+In SCVR the vars are listed as null terminated strings in the order shorts,
+longs, floats, this does not appear to be used by SCDT.
+</p>
+
+<p>
+The number of variables of each type is stored in SCHD, the format of which
+appears to be:
+</p>
+
+<p class="verse">
+SCHD (long) size, (cstr32) scriptname, (long) num shorts, (long) num longs,<br />
+(long) num floats<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;(long) 2, (long) size of SCVR seg<br />
+<br />
+<br />
+<br />
+SCDT uses the index of the variable by type, so the first float would be 'f<br />
+0001', it starts at<br />
+<br />
+1 not 0 because its stupid.<br />
+</p>
+</div>
+</div>
+<div id="outline-container-org8bbe624" class="outline-2">
+<h2 id="org8bbe624"><span class="section-number-2">50.</span> Mnemonics</h2>
+<div class="outline-text-2" id="text-50">
+<p class="verse">
+Mnemonic	HexOp	Params<br />
+<br />
+<br />
+<br />
+-&gt;		010C	(bstr) objectname	; appears before the function which uses it<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;; lasts for 1 simple statement only<br />
+<br />
+else		0107	(byte) statement count<br />
+<br />
+elseif		0108	(byte) statement count, (ifexpr) condition<br />
+<br />
+end		0101	none<br />
+<br />
+endif		0109	none<br />
+<br />
+if		0106	(byte) statement count, (ifexpr) condition<br />
+<br />
+return		0124	none<br />
+<br />
+set		0105	(variable) target, (setexpr) newvalue<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+ForceSneak	1163	none<br />
+<br />
+GetAlchemy	106B	none<br />
+<br />
+GetDistance	1001	(ref) objectname<br />
+<br />
+GetPos		100A	(byte) 'X' 'Y' or 'Z'<br />
+<br />
+<br />
+<br />
+Journal		10CC	(bstr) topic, (sparam) index<br />
+<br />
+Lock		1136	(short) literal<br />
+<br />
+<br />
+<br />
+MessageBox	1000	(lstr) formatstr,<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;(byte) num args, [ (variable) arg1 [, (variable) arg2 [&#x2026;]]],<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;(byte) num buttons, [ (bcstr) but1 [, (bcstr) but2 [&#x2026;]]]<br />
+<br />
+<br />
+<br />
+Position	1004	(float) x, (float) y, (float) z, (float) zangle<br />
+<br />
+Random		1021	(short) limit<br />
+<br />
+<br />
+<br />
+SetAlchemy	106C	(fparam) newalchemy<br />
+<br />
+SetSneak	1075	(fparam) newsneak<br />
+<br />
+<br />
+<br />
+StopScript      101C	(bstr) scriptname<br />
+</p>
+</div>
+</div>
+<div id="outline-container-org94be645" class="outline-2">
+<h2 id="org94be645"><span class="section-number-2">51.</span> Definitions</h2>
+<div class="outline-text-2" id="text-51">
+<p>
+What Dave Humphrey included here is a sort of language definition, like those
+used in programming language theory.
+</p>
+
+<p class="verse">
+NOTE: there are no implicit separators, this is a binary stream.<br />
+<br />
+&lt;??&gt;	=	byte value<br />
+<br />
+&lt;sp&gt;	=	' '<br />
+<br />
+<br />
+<br />
+bstr	=	(byte) length, ascii<br />
+<br />
+lstr	=	(short) length, ascii<br />
+<br />
+cstr	=	ascii, &lt;00&gt;<br />
+<br />
+bcstr	=	(byte) length, cstr<br />
+<br />
+length1	=	(byte) length<br />
+<br />
+varidx1	=	(byte) var index<br />
+<br />
+varidx2	=	(short) var index<br />
+<br />
+varidx	=	(short) var index<br />
+<br />
+<br />
+<br />
+mathop		=	('+'|'-'|'*'|'/')<br />
+<br />
+mathcomp	=	('<code>='|'!</code>'|'&lt;'|'&lt;='|'&gt;'|'&gt;=')<br />
+<br />
+valascii	=	['-']*(0-9)[.]*(0-9)<br />
+<br />
+vartype		=	('s'|'f'|'l')<br />
+<br />
+local		=	( vartype varidx )<br />
+<br />
+global		=	('G' bstr)<br />
+<br />
+variable	=	( local | global )<br />
+<br />
+ref		=	('r' bstr)<br />
+<br />
+foreign		=	( ref local )<br />
+<br />
+fparam		=	( float | local &lt;00&gt; ) ; 4 bytes either way see<br />
+<br />
+sparam		=	( short &lt;ffff&gt; | local &lt;00&gt; ) ; 4 bytes either way<br />
+see<br />
+<br />
+rval		=	( local | valascii )<br />
+<br />
+setval		=	( local | global | func | valascii )<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;; The know issue of: set temp to ( myobj.val ); not working is a runtime<br />
+problem<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;; the compiler generates a foreign reference exactly the same as for if<br />
+<br />
+<br />
+<br />
+func		=	('X' opcode [&lt;sp&gt; rval [&lt;sp&gt; rval [&lt;sp&gt; rval<br />
+[&lt;sp&gt; rval]]]])<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;; How does the evaluator know how many params to grab?<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;	everything up to the end of the expression, can only have 1 function<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;	per set<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;		set temp to ( Position 1 2 3 4 ) okay<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;		set temp to ( Position 1 2 3 4 + 1 ) wont work<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;		set temp to ( 1 + Position 1 2 3 4 ) would work<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;		but this would not be backwards compatible<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;	up to the next space, funcs can only have 1 param,<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;		set temp to ( GetPos x + GetPos y ) okay<br />
+<br />
+&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;;		this is backwards compatable, tested and works<br />
+<br />
+<br />
+<br />
+- polish :: Reverse polish calculator<br />
+<br />
+&#xa0;&#xa0;Reverse polish calculator, uses space as 'push', mathop as operators, setval<br />
+&#xa0;&#xa0;as values. If there is only 1 variable or 1 function then an additional &lt;00&gt;<br />
+&#xa0;&#xa0;is appended which appears to do nothing, but is required by the runtime.<br />
+- setexpr :: (byte) length, &lt;sp&gt; polish<br />
+- ifval	:: ( local | global | foreign | func | valascii )<br />
+- ifexpr :: (byte) length, ifval [mathcomp ifval]<br />
+<br />
+&#xa0;&#xa0;The if evaluator cannot handle calculations, the comparison operator is not<br />
+&#xa0;&#xa0;implemented as part of the reverse polish calculator, the compiler will encode<br />
+&#xa0;&#xa0;calculations in reverse polish but the comparisons are inserted in the wrong<br />
+&#xa0;&#xa0;order to work. Like the calculator if there is only one term a &lt;00&gt; byte is<br />
+&#xa0;&#xa0;appended<br />
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Dave Humphrey - uesp@sympatico.ca Bryce Carson - bryce.a.carson@gmail.com</p>
+<p class="date">Created: 2025-01-01 Wed 15:34</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

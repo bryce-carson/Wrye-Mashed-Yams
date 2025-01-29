@@ -1,0 +1,2 @@
+* Read about https://github.com/i18next/i18nextify
+* Read about https://docs.python.org/3/library/i18n.html

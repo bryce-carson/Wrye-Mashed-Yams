@@ -1,0 +1,5 @@
+- The langauge files were renamed to the names of the langauge as stated in
+  those langauges (e.g. German, commonly abbreviated "de", is written as
+  Deutsch).
+- The Pickle file for French was deleted.
+- The underscore following French.txt_ was removed.
